@@ -3,7 +3,7 @@ If you need Help or if your getting Errors feel free to go to https://discord.gg
 
 Setup:
 -
--Download all Picture Files and the PC-Optimus in the newest Version
+-Download all Picture Files and the PC-Optimus in the newest Version https://github.com/truelockmc/PC-Optimus/releases
 -Install Python and the needed Modules
 -Run the Py File you just downloaded
 -Executable will be avaible in the next version
@@ -36,4 +36,5 @@ Changelog:
 -
 Beta 1.0:
 -First Publish
+https://github.com/truelockmc/PC-Optimus/releases/tag/Beta
 
