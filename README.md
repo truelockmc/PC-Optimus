@@ -1,4 +1,4 @@
-A lightweight opensource Python Tool which offers you various Ways to clean up you PC update it or gather Information.
+A lightweight opensource Python Tool for Windows which offers you various Ways to clean up you PC update it or gather Information.
 If you need Help or if your getting Errors feel free to go to https://discord.gg/36bPs8cQ5B , join the Server, ask for help and send me Your Log File or Error Codes if you have.
 
 Setup:
