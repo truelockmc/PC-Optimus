@@ -26,8 +26,7 @@ Information(currently in maintenance):
 -Internet speedtest
 -Generic System Info
 -Connection Info (Network Name etc)
--Current CPU and RAM Usage
--Installed Programms
+-Advanced Systeminfo
 
 Help Button:
 Explains what every Button does
@@ -37,4 +36,11 @@ Changelog:
 Beta 1.0:
 -First Publish
 https://github.com/truelockmc/PC-Optimus/releases/tag/Beta
+
+Beta 1.1:
+-Added Systeminfo
+-Added Network Info
+-Added Internet Speedtest
+-Added Advanced Systeminfo
+https://github.com/truelockmc/PC-Optimus/releases/tag/Beta1.1
 
