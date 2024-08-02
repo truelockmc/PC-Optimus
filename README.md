@@ -3,10 +3,14 @@ If you need Help or if your getting Errors feel free to go to https://discord.gg
 
 Setup:
 -
+If your using the .py File:
 -Download all Picture Files and the PC-Optimus in the newest Version https://github.com/truelockmc/PC-Optimus/releases
 -Install Python and the needed Modules
--Run the Py File you just downloaded
--Executable will be avaible in the next version
+-Run the .py File you just downloaded
+-If you need help go to https://discord.gg/36bPs8cQ5B
+
+If your using the .exe File:
+-Just download and Run, maybe Microsoft Defender will show you a warning,that Microsoft doesnt know who created this Code you can click on further Information and run anyways, or if you dont trust me just use the .py File so you can Look at the Code
 -If you need help go to https://discord.gg/36bPs8cQ5B
 
 Current Features:
