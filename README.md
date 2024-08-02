@@ -48,3 +48,23 @@ Beta 1.1:
 -Added Advanced Systeminfo
 https://github.com/truelockmc/PC-Optimus/releases/tag/Beta1.1
 
+Beta 1.2:
+-Fixxed Bug:
+[ERROR] [2024-07-26 15:57:50] Error running command: cleanmgr
+[DETAILS] decode() argument 'encoding' must be str, not None
+[ERROR] [2024-07-26 15:58:12] Error running command: cleanmgr
+[DETAILS] decode() argument 'encoding' must be str, not None
+[ERROR] [2024-07-26 15:58:18] Error running command: wsreset.exe
+[DETAILS] decode() argument 'encoding' must be str, not None
+[ERROR] [2024-07-26 15:58:25] Error running command: cleanmgr /sagerun:1
+[DETAILS] decode() argument 'encoding' must be str, not None
+[ERROR] [2024-07-26 16:01:00] Error running command: cleanmgr
+[DETAILS] decode() argument 'encoding' must be str, not None
+[ERROR] [2024-07-26 16:01:07] Error running command: wsreset.exe
+[DETAILS] decode() argument 'encoding' must be str, not None
+[COMMAND] [2024-07-26 16:03:31] wsreset.exe
+
+when running a command
+
+Beta 1.3:
+-Created Executable (.exe) so the User doesnt need to install Python
