@@ -75,3 +75,5 @@ Beta 1.4:
 -Added Defragment Function to Optimize your Hard Drive
 -Added Empty Recycle Bin to Empty your Recycle Bin
 -Temporary Removed .exe Because of Errors and False Virus Alerts
+-Solved Syntax Error
+-Optimized Import Section
