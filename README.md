@@ -9,7 +9,7 @@ If your using the .py File:
 -Run the .py File you just downloaded
 -If you need help go to https://discord.gg/36bPs8cQ5B
 
-If your using the .exe File:
+If your using the .exe File (Temporary Not Avaible because of Errors and False Virus Alerts):
 -Just download and Run, maybe Microsoft Defender will show you a warning,that Microsoft doesnt know who created this Code you can click on further Information and run anyways, or if you dont trust me just use the .py File so you can Look at the Code
 -If you need help go to https://discord.gg/36bPs8cQ5B
 
@@ -25,6 +25,8 @@ Cleanup:
 -Cleanup your Temporary Files
 -Cleanup invisible Storage consuming Files
 -Preconfigured Cleanup, cleans Files like teamporary Internet Files, File thumbnails, recycle bin and uneccessary Windows Feedback Files
+-Defragment/Optimize your Harddrive
+-Empty your Recycle Bin
 
 Information(currently in maintenance):
 -Internet speedtest
@@ -68,3 +70,8 @@ when running a command
 
 Beta 1.3:
 -Created Executable (.exe) so the User doesnt need to install Python
+
+Beta 1.4:
+-Added Defragment Function to Optimize your Hard Drive
+-Added Empty Recycle Bin to Empty your Recycle Bin
+-Temporary Removed .exe Because of Errors and False Virus Alerts
