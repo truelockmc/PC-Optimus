@@ -27,12 +27,14 @@ Cleanup:
 -Preconfigured Cleanup, cleans Files like teamporary Internet Files, File thumbnails, recycle bin and uneccessary Windows Feedback Files
 -Defragment/Optimize your Harddrive
 -Empty your Recycle Bin
+-Diagnose Storage Errors
 
 Information(currently in maintenance):
 -Internet speedtest
 -Generic System Info
 -Connection Info (Network Name etc)
 -Advanced Systeminfo
+-Monitor current PC Resource Usage and see how much Resources are used by which App (like an Extended Taskmanager)
 
 Help Button:
 Explains what every Button does
@@ -77,3 +79,9 @@ Beta 1.4:
 -Temporary Removed .exe Because of Errors and False Virus Alerts
 -Solved Syntax Error
 -Optimized Import Section
+
+Beta 2.0:
+-Added Resource Monitoring
+-Added Storage Diagnostics
+-Added Advanced Systeminfo Functionality
+-Integrated other Windows Services
