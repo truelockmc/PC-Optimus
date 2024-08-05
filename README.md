@@ -4,8 +4,9 @@ If you need Help or if your getting Errors feel free to go to https://discord.gg
 Setup:
 -
 If your using the .py File:
--Download all Picture Files and the PC-Optimus in the newest Version https://github.com/truelockmc/PC-Optimus/releases
--Install Python and the needed Modules
+-Download logo.png and the PC-Optimus in the newest Version https://github.com/truelockmc/PC-Optimus/releases
+-Install Python
+-install the needed Modules(Listed in requirements.txt)
 -Run the .py File you just downloaded
 -If you need help go to https://discord.gg/36bPs8cQ5B
 
@@ -15,7 +16,10 @@ If your using the .exe File (Temporary Not Avaible because of Errors and False V
 
 Current Features:
 -
-Updating(under Developement):
+System Health Scan:
+-Scans your System Files for Errors and Fixxes them
+
+Updating:
 -Update every app on your PC
 -run Windows Update
 -update Drivers
@@ -29,7 +33,7 @@ Cleanup:
 -Empty your Recycle Bin
 -Diagnose Storage Errors
 
-Information(currently in maintenance):
+Information:
 -Internet speedtest
 -Generic System Info
 -Connection Info (Network Name etc)
@@ -69,9 +73,11 @@ Beta 1.2:
 [COMMAND] [2024-07-26 16:03:31] wsreset.exe
 
 when running a command
+https://github.com/truelockmc/PC-Optimus/releases/tag/Beta1.2
 
 Beta 1.3:
 -Created Executable (.exe) so the User doesnt need to install Python
+https://github.com/truelockmc/PC-Optimus/releases/tag/Beta1.3
 
 Beta 1.4:
 -Added Defragment Function to Optimize your Hard Drive
@@ -79,9 +85,20 @@ Beta 1.4:
 -Temporary Removed .exe Because of Errors and False Virus Alerts
 -Solved Syntax Error
 -Optimized Import Section
+https://github.com/truelockmc/PC-Optimus/releases/tag/Beta1.4
 
 Beta 2.0:
 -Added Resource Monitoring
 -Added Storage Diagnostics
 -Added Advanced Systeminfo Functionality
 -Integrated other Windows Services
+https://github.com/truelockmc/PC-Optimus/releases/tag/Beta2.0
+
+Beta 3.0:
+-Added Loading Screen to the Clena invis Function
+-Fixxed not working Update Functions
+-Fixxed not working Empty Recycle Bin
+-Fixxed not working simplified System Info
+-Added System Health Scan
+-You will now only need the Image logo.png
+https://github.com/truelockmc/PC-Optimus/releases/tag/Beta3.0
