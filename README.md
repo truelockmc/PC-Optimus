@@ -6,7 +6,8 @@ Setup:
 If your using the .py File:
 -Download logo.png and the PC-Optimus in the newest Version https://github.com/truelockmc/PC-Optimus/releases
 -Install Python
--install the the Modules(run "python -m pip install psutil chardet speedtest-cli pillow" in the cmd)
+-install the Modules(run "python -m pip install psutil chardet speedtest-cli pillow" in the cmd)
+-put logo.png and the .py File in the same directory
 -Run the .py File you just downloaded
 -If you need help go to https://discord.gg/36bPs8cQ5B
 
