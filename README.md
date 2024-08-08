@@ -16,8 +16,11 @@ If your using the .exe File (Temporary Not Avaible because of Errors and False V
 
 Current Features:
 -
-System Health Scan:
--Scans your System Files for Errors and Fixxes them
+Repair:
+-Scan your System Files for Errors and Fixx them
+-solve Storage, Virtual Storage and RAM Errors
+-solve File System Errors
+-solve Connection Errors by Cleaning Up, resetting and restarting your Network Settings and Adapters
 
 Updating:
 -Update every app on your PC
@@ -102,3 +105,11 @@ Beta 3.0:
 -Added System Health Scan
 -You will now only need the Image logo.png
 https://github.com/truelockmc/PC-Optimus/releases/tag/Beta3.0
+
+Beta 4.0:
+-added Virtual Storage Cleanup
+-added repair Connection
+-added repair File System
+-added repair Menu
+-improved Admin Command Handling
+https://github.com/truelockmc/PC-Optimus/releases/tag/Beta4.0
