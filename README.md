@@ -35,7 +35,6 @@ Cleanup:
 -Preconfigured Cleanup, cleans Files like teamporary Internet Files, File thumbnails, recycle bin and uneccessary Windows Feedback Files
 -Defragment/Optimize your Harddrive
 -Empty your Recycle Bin
--Diagnose Storage Errors
 
 Information:
 -Internet speedtest
