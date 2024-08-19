@@ -1,4 +1,4 @@
-A lightweight opensource Python Tool for Windows which offers you various Ways to clean up, update, repair and gather Infos about your PC.
+A lightweight opensource Python Tool for Windows which offers you various Ways to clean up, update, repair and gather Infos about your PC, without any Code Knowledge.
 If you need Help or if your getting Errors feel free to go to https://discord.gg/36bPs8cQ5B , join the Server, ask for help and send me Your Log File or Error Codes if you have.
 
 Setup:
@@ -6,7 +6,7 @@ Setup:
 If your using the .py File:
 -Download setup.bat and PC-Optimus.py in the newest Version https://github.com/truelockmc/PC-Optimus/releases
 -run setup.bat (Automatically Installs Python if you havent already, and the Modules for you)
--if you dont want to use setup.py, do manually install Python and the Modules
+-if you dont want to use setup.bat, do manually install Python and the Modules
 -run PCOptimus.py
 -If you need help go to https://discord.gg/36bPs8cQ5B
 
