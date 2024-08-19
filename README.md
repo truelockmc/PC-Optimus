@@ -112,3 +112,15 @@ Beta 4.0:
 -added repair Menu
 -improved Admin Command Handling
 https://github.com/truelockmc/PC-Optimus/releases/tag/Beta4.0
+
+Beta 5.0:
+-Completely Overworked Admin Command Handling
+-Removed Pillow Module
+-you wont need any additional Files now
+-improved logging
+-improved Repair Connection
+-removed unecessary Code
+-minified Code, by Removing Functions
+-Many Features had own Functions and some created Temp Files, now the Code has a global Admin Command Handling
+-added Setup.bat, now People without any Idea of Coding can easily install the needed components
+-solved Sytax Errors
