@@ -4,11 +4,10 @@ If you need Help or if your getting Errors feel free to go to https://discord.gg
 Setup:
 -
 If your using the .py File:
--Download logo.png and the PC-Optimus in the newest Version https://github.com/truelockmc/PC-Optimus/releases
--Install Python
--install the Modules(run "python -m pip install psutil chardet speedtest-cli pillow" in the cmd)
--put logo.png and the .py File in the same directory
--Run the .py File you just downloaded
+-Download setup.bat and PC-Optimus.py in the newest Version https://github.com/truelockmc/PC-Optimus/releases
+-run setup.bat (Automatically Installs Python if you havent already, and the Modules for you)
+-if you dont want to use setup.py, do manually install Python and the Modules
+-run PCOptimus.py
 -If you need help go to https://discord.gg/36bPs8cQ5B
 
 If your using the .exe File (Temporary Not Avaible because of Errors and False Virus Alerts):
