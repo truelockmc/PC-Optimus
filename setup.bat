@@ -2,6 +2,12 @@
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
+rem Set the log file path
+set logfile=log.txt
+
+rem Start logging
+echo ==== Starting setup.bat ====> %logfile%
+
 :select_language
 cls
 echo ================================================================================
@@ -58,7 +64,7 @@ cls
 echo ================================================================================
 echo Checking Python installation...
 echo ================================================================================
-python --version >nul 2>&1
+python --version >nul 2>>%logfile%
 if %errorlevel% == 0 (
     echo Python is already installed.
     echo Press Enter to proceed with module installation...
@@ -76,7 +82,7 @@ cls
 echo ================================================================================
 echo Überprüfe Python-Installation...
 echo ================================================================================
-python --version >nul 2>&1
+python --version >nul 2>>%logfile%
 if %errorlevel% == 0 (
     echo Python ist bereits installiert.
     echo Drücke Enter um fortzufahren und die notwendigen Module zu installieren...
@@ -94,7 +100,7 @@ cls
 echo ================================================================================
 echo Vérification de l'installation de Python...
 echo ================================================================================
-python --version >nul 2>&1
+python --version >nul 2>>%logfile%
 if %errorlevel% == 0 (
     echo Python est déjà installé.
     echo Appuyez sur Entrée pour continuer avec l'installation des modules...
@@ -112,11 +118,12 @@ cls
 echo ================================================================================
 echo Installing Python...
 echo ================================================================================
-start /wait winget install Python.Python.3.12 --silent --wait
+start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Python installation failed. Please install Python manually and restart the script.
     echo ================================================================================
+    echo ==== Error during Python installation ====> %logfile%
     pause
     goto end
 )
@@ -127,11 +134,12 @@ cls
 echo ================================================================================
 echo Python wird installiert...
 echo ================================================================================
-start /wait winget install Python.Python.3.12 --silent --wait
+start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Fehler bei der Python-Installation. Bitte installieren Sie Python manuell und starten Sie das Skript erneut.
     echo ================================================================================
+    echo ==== Fehler während der Python-Installation ====> %logfile%
     pause
     goto end
 )
@@ -142,11 +150,12 @@ cls
 echo ================================================================================
 echo Installation de Python...
 echo ================================================================================
-start /wait winget install Python.Python.3.12 --silent --wait
+start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Échec de l'installation de Python. Veuillez installer Python manuellement et redémarrer le script.
     echo ================================================================================
+    echo ==== Erreur pendant l'installation de Python ====> %logfile%
     pause
     goto end
 )
@@ -157,9 +166,9 @@ cls
 echo ================================================================================
 echo Installing required Python modules...
 echo ================================================================================
-python -m ensurepip --upgrade
-python -m pip install --upgrade pip
-python -m pip install speedtest-cli chardet psutil wmi
+python -m ensurepip --upgrade >>%logfile% 2>&1
+python -m pip install --upgrade pip >>%logfile% 2>&1
+python -m pip install speedtest-cli chardet psutil wmi >>%logfile% 2>&1
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -168,7 +177,7 @@ if %errorlevel% == 0 (
     echo ================================================================================
 ) else (
     echo ================================================================================
-    echo Error installing modules. Please try again.
+    echo Error installing modules. Please check %logfile% for details.
     echo ================================================================================
 )
 pause
@@ -179,9 +188,9 @@ cls
 echo ================================================================================
 echo Installiere notwendige Python-Module...
 echo ================================================================================
-python -m ensurepip --upgrade
-python -m pip install --upgrade pip
-python -m pip install speedtest-cli chardet psutil wmi
+python -m ensurepip --upgrade >>%logfile% 2>&1
+python -m pip install --upgrade pip >>%logfile% 2>&1
+python -m pip install speedtest-cli chardet psutil wmi >>%logfile% 2>&1
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -190,7 +199,7 @@ if %errorlevel% == 0 (
     echo ================================================================================
 ) else (
     echo ================================================================================
-    echo Fehler bei der Installation der Module. Bitte versuchen Sie es erneut.
+    echo Fehler bei der Installation der Module. Bitte überprüfen Sie %logfile% für Details.
     echo ================================================================================
 )
 pause
@@ -201,9 +210,9 @@ cls
 echo ================================================================================
 echo Installation des modules Python nécessaires...
 echo ================================================================================
-python -m ensurepip --upgrade
-python -m pip install --upgrade pip
-python -m pip install speedtest-cli chardet psutil wmi
+python -m ensurepip --upgrade >>%logfile% 2>&1
+python -m pip install --upgrade pip >>%logfile% 2>&1
+python -m pip install speedtest-cli chardet psutil wmi >>%logfile% 2>&1
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -212,11 +221,13 @@ if %errorlevel% == 0 (
     echo ================================================================================
 ) else (
     echo ================================================================================
-    echo Erreur lors de l'installation des modules. Veuillez réessayer.
+    echo Erreur lors de l'installation des modules. Veuillez vérifier %logfile% pour plus de détails.
     echo ================================================================================
 )
 pause
 goto end
 
 :end
+echo ==== Script ended ==== >> %logfile%
 exit
+
