@@ -2,21 +2,6 @@
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
-rem Set the log file path
-set logfile=log.txt
-
-rem Start logging
-echo ==== Starting setup.bat ====> %logfile%
-echo ==== Starting setup.bat ====> %logfile% >> %logfile%
-
-rem Check if the script is running with administrator privileges
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-    echo This script requires administrative privileges. Relaunching with elevation... >> %logfile%
-    powershell -Command "Start-Process cmd -ArgumentList '/c %~0 %*' -Verb RunAs" >> %logfile% 2>&1
-    exit /b
-)
-
 :select_language
 cls
 echo ================================================================================
@@ -73,31 +58,17 @@ cls
 echo ================================================================================
 echo Checking Python installation...
 echo ================================================================================
-python --version >nul 2>>%logfile%
+python --version >nul 2>&1
 if %errorlevel% == 0 (
     echo Python is already installed.
     echo Press Enter to proceed with module installation...
     pause >nul
     goto install_modules_en
 ) else (
-    echo Python is not installed or not found in PATH! >> %logfile%
-    echo Python is not installed, but needed to run .py files. Do you want to install Python now? >> %logfile%
-    set /p install_python="(Y/N): "
-    if /i "%install_python%"=="Y" (
-        echo Opening Python 3.12 installation page in Microsoft Store... >> %logfile%
-        start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
-        echo ================================================================================
-        echo Please press Install in the Microsoft Store to install Python.
-        echo ================================================================================
-        pause
-        goto end
-    ) else (
-        echo ================================================================================
-        echo Please install Python manually or you won’t be able to use PCOptimus.
-        echo ================================================================================
-        pause
-        goto end
-    )
+    echo Python is not installed!
+    set /p install_python="Would you like to install Python now? (Y/N): "
+    if /i "%install_python%"=="Y" goto install_python_en
+    goto end
 )
 
 :check_python_de
@@ -105,31 +76,17 @@ cls
 echo ================================================================================
 echo Überprüfe Python-Installation...
 echo ================================================================================
-python --version >nul 2>>%logfile%
+python --version >nul 2>&1
 if %errorlevel% == 0 (
     echo Python ist bereits installiert.
     echo Drücke Enter um fortzufahren und die notwendigen Module zu installieren...
     pause >nul
     goto install_modules_de
 ) else (
-    echo Python ist nicht installiert oder nicht im PATH gefunden! >> %logfile%
-    echo Python ist nicht installiert, wird jedoch benötigt, um .py-Dateien auszuführen. Möchten Sie Python jetzt installieren? >> %logfile%
-    set /p install_python="(J/N): "
-    if /i "%install_python%"=="J" (
-        echo Öffne Python 3.12 Installationsseite im Microsoft Store... >> %logfile%
-        start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
-        echo ================================================================================
-        echo Bitte klicken Sie auf Installieren im Microsoft Store, um Python zu installieren.
-        echo ================================================================================
-        pause
-        goto end
-    ) else (
-        echo ================================================================================
-        echo Bitte installieren Sie Python manuell oder Sie können PCOptimus nicht verwenden.
-        echo ================================================================================
-        pause
-        goto end
-    )
+    echo Python ist nicht installiert!
+    set /p install_python="Möchten Sie Python jetzt installieren? (J/N): "
+    if /i "%install_python%"=="J" goto install_python_de
+    goto end
 )
 
 :check_python_fr
@@ -137,41 +94,91 @@ cls
 echo ================================================================================
 echo Vérification de l'installation de Python...
 echo ================================================================================
-python --version >nul 2>>%logfile%
+python --version >nul 2>&1
 if %errorlevel% == 0 (
     echo Python est déjà installé.
     echo Appuyez sur Entrée pour continuer avec l'installation des modules...
     pause >nul
     goto install_modules_fr
 ) else (
-    echo Python n'est pas installé ou introuvable dans PATH! >> %logfile%
-    echo Python n'est pas installé, mais est nécessaire pour exécuter des fichiers .py. Voulez-vous installer Python maintenant? >> %logfile%
-    set /p install_python="(O/N): "
-    if /i "%install_python%"=="O" (
-        echo Ouverture de la page d'installation de Python 3.12 dans le Microsoft Store... >> %logfile%
-        start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
-        echo ================================================================================
-        echo Veuillez appuyer sur Installer dans le Microsoft Store pour installer Python.
-        echo ================================================================================
-        pause
-        goto end
-    ) else (
-        echo ================================================================================
-        echo Veuillez installer Python manuellement ou vous ne pourrez pas utiliser PCOptimus.
-        echo ================================================================================
-        pause
-        goto end
-    )
+    echo Python n'est pas installé!
+    set /p install_python="Voulez-vous installer Python maintenant? (O/N): "
+    if /i "%install_python%"=="O" goto install_python_fr
+    goto end
 )
+
+:install_python_en
+cls
+echo ================================================================================
+echo Installing Python...
+echo ================================================================================
+start ms-windows-store://pdp/?productid=9ncvdn91xzqp
+msg * press Install
+cls
+echo ================================================================================
+echo Press Enter when the Installation is completed...
+echo ================================================================================
+pause
+
+if %errorlevel% neq 0 (
+    echo ================================================================================
+    echo Python installation failed. Please install Python manually and restart the script.
+    echo ================================================================================
+    pause
+    goto end
+)
+goto install_modules_en
+
+:install_python_de
+cls
+echo ================================================================================
+echo Python wird installiert...
+echo ================================================================================
+start ms-windows-store://pdp/?productid=9ncvdn91xzqp
+msg * Drücke Installieren
+cls
+echo ================================================================================
+echo Drücke Enter wenn die Installation abgeschlossen ist...
+echo ================================================================================
+pause
+if %errorlevel% neq 0 (
+    echo ================================================================================
+    echo Fehler bei der Python-Installation. Bitte installieren Sie Python manuell und starten Sie das Skript erneut.
+    echo ================================================================================
+    pause
+    goto end
+)
+goto install_modules_de
+
+:install_python_fr
+cls
+echo ================================================================================
+echo Installation de Python...
+echo ================================================================================
+start ms-windows-store://pdp/?productid=9ncvdn91xzqp
+msg * Cliquez sur Installer
+cls
+echo ================================================================================
+echo Appuyez sur Entrée lorsque l'installation est terminée...
+echo ================================================================================
+pause
+if %errorlevel% neq 0 (
+    echo ================================================================================
+    echo Échec de l'installation de Python. Veuillez installer Python manuellement et redémarrer le script.
+    echo ================================================================================
+    pause
+    goto end
+)
+goto install_modules_fr
 
 :install_modules_en
 cls
 echo ================================================================================
 echo Installing required Python modules...
 echo ================================================================================
-python -m ensurepip --upgrade >> %logfile% 2>&1
-python -m pip install --upgrade pip >> %logfile% 2>&1
-python -m pip install speedtest-cli chardet psutil wmi >> %logfile% 2>&1
+python -m ensurepip --upgrade
+python -m pip install --upgrade pip
+python -m pip install speedtest-cli chardet psutil wmi
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -180,7 +187,7 @@ if %errorlevel% == 0 (
     echo ================================================================================
 ) else (
     echo ================================================================================
-    echo Error installing modules. Please check %logfile% for details.
+    echo Error installing modules. Please try again.
     echo ================================================================================
 )
 pause
@@ -191,9 +198,9 @@ cls
 echo ================================================================================
 echo Installiere notwendige Python-Module...
 echo ================================================================================
-python -m ensurepip --upgrade >> %logfile% 2>&1
-python -m pip install --upgrade pip >> %logfile% 2>&1
-python -m pip install speedtest-cli chardet psutil wmi >> %logfile% 2>&1
+python -m ensurepip --upgrade
+python -m pip install --upgrade pip
+python -m pip install speedtest-cli chardet psutil wmi
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -202,7 +209,7 @@ if %errorlevel% == 0 (
     echo ================================================================================
 ) else (
     echo ================================================================================
-    echo Fehler bei der Installation der Module. Bitte überprüfen Sie %logfile% für Details.
+    echo Fehler bei der Installation der Module. Bitte versuchen Sie es erneut.
     echo ================================================================================
 )
 pause
@@ -213,9 +220,9 @@ cls
 echo ================================================================================
 echo Installation des modules Python nécessaires...
 echo ================================================================================
-python -m ensurepip --upgrade >> %logfile% 2>&1
-python -m pip install --upgrade pip >> %logfile% 2>&1
-python -m pip install speedtest-cli chardet psutil wmi >> %logfile% 2>&1
+python -m ensurepip --upgrade
+python -m pip install --upgrade pip
+python -m pip install speedtest-cli chardet psutil wmi
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -224,13 +231,11 @@ if %errorlevel% == 0 (
     echo ================================================================================
 ) else (
     echo ================================================================================
-    echo Erreur lors de l'installation des modules. Veuillez vérifier %logfile% pour les détails.
+    echo Erreur lors de l'installation des modules. Veuillez réessayer.
     echo ================================================================================
 )
 pause
 goto end
 
 :end
-echo ==== Script ended ====> %logfile%
-echo ==== Script ended ====> %logfile% >> %logfile%
 exit
