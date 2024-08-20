@@ -157,6 +157,7 @@ cls
 echo ================================================================================
 echo Installing Python...
 echo ================================================================================
+echo Starting Python installation via winget... >>%logfile%
 start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
@@ -173,6 +174,7 @@ cls
 echo ================================================================================
 echo Python wird installiert...
 echo ================================================================================
+echo Starte Python-Installation über winget... >>%logfile%
 start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
@@ -189,6 +191,7 @@ cls
 echo ================================================================================
 echo Installation de Python...
 echo ================================================================================
+echo Démarrage de l'installation de Python via winget... >>%logfile%
 start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
