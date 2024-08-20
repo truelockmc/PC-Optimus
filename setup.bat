@@ -67,7 +67,7 @@ if %errorlevel% == 0 (
 ) else (
     echo Python is not installed!
     set /p install_python="Would you like to install Python now? (Y/N): "
-    if /i "%install_python%"=="Y" goto check_winget_en
+    if /i "%install_python%"=="Y" goto install_python_en
     goto end
 )
 
@@ -85,7 +85,7 @@ if %errorlevel% == 0 (
 ) else (
     echo Python ist nicht installiert!
     set /p install_python="Möchten Sie Python jetzt installieren? (J/N): "
-    if /i "%install_python%"=="J" goto check_winget_de
+    if /i "%install_python%"=="J" goto install_python_de
     goto end
 )
 
@@ -103,64 +103,16 @@ if %errorlevel% == 0 (
 ) else (
     echo Python n'est pas installé!
     set /p install_python="Voulez-vous installer Python maintenant? (O/N): "
-    if /i "%install_python%"=="O" goto check_winget_fr
+    if /i "%install_python%"=="O" goto install_python_fr
     goto end
 )
-
-:check_winget_en
-cls
-echo ================================================================================
-echo Checking if winget is installed...
-echo ================================================================================
-winget --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Winget is not installed. Please install it manually from:
-    echo https://aka.ms/getwinget and restart the script.
-    echo ================================================================================
-    pause
-    goto end
-)
-goto install_python_en
-
-:check_winget_de
-cls
-echo ================================================================================
-echo Überprüfe ob winget installiert ist...
-echo ================================================================================
-winget --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Winget ist nicht installiert. Bitte installieren Sie es manuell von:
-    echo https://aka.ms/getwinget und starten Sie das Skript erneut.
-    echo ================================================================================
-    pause
-    goto end
-)
-goto install_python_de
-
-:check_winget_fr
-cls
-echo ================================================================================
-echo Vérification si winget est installé...
-echo ================================================================================
-winget --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Winget n'est pas installé. Veuillez l'installer manuellement à partir de :
-    echo https://aka.ms/getwinget et redémarrez le script.
-    echo ================================================================================
-    pause
-    goto end
-)
-goto install_python_fr
 
 :install_python_en
 cls
 echo ================================================================================
 echo Installing Python...
 echo ================================================================================
-winget install Python.Python.3.12 --silent --wait
+start /wait winget install Python.Python.3.12 --silent --wait
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Python installation failed. Please install Python manually and restart the script.
@@ -175,7 +127,7 @@ cls
 echo ================================================================================
 echo Python wird installiert...
 echo ================================================================================
-winget install Python.Python.3.12 --silent --wait
+start /wait winget install Python.Python.3.12 --silent --wait
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Fehler bei der Python-Installation. Bitte installieren Sie Python manuell und starten Sie das Skript erneut.
@@ -190,7 +142,7 @@ cls
 echo ================================================================================
 echo Installation de Python...
 echo ================================================================================
-winget install Python.Python.3.12 --silent --wait
+start /wait winget install Python.Python.3.12 --silent --wait
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Échec de l'installation de Python. Veuillez installer Python manuellement et redémarrer le script.
