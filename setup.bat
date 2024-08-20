@@ -86,7 +86,6 @@ if %errorlevel% == 0 (
     if /i "%install_python%"=="Y" (
         echo Opening Python 3.12 installation page in Microsoft Store... >> %logfile%
         start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
-        echo Please press Install in the Microsoft Store to install Python. >> %logfile%
         echo ================================================================================
         echo Please press Install in the Microsoft Store to install Python.
         echo ================================================================================
@@ -119,7 +118,6 @@ if %errorlevel% == 0 (
     if /i "%install_python%"=="J" (
         echo Öffne Python 3.12 Installationsseite im Microsoft Store... >> %logfile%
         start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
-        echo Bitte klicken Sie auf Installieren im Microsoft Store, um Python zu installieren. >> %logfile%
         echo ================================================================================
         echo Bitte klicken Sie auf Installieren im Microsoft Store, um Python zu installieren.
         echo ================================================================================
@@ -152,7 +150,6 @@ if %errorlevel% == 0 (
     if /i "%install_python%"=="O" (
         echo Ouverture de la page d'installation de Python 3.12 dans le Microsoft Store... >> %logfile%
         start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
-        echo Veuillez appuyer sur Installer dans le Microsoft Store pour installer Python. >> %logfile%
         echo ================================================================================
         echo Veuillez appuyer sur Installer dans le Microsoft Store pour installer Python.
         echo ================================================================================
