@@ -113,7 +113,8 @@ echo ===========================================================================
 echo Installing Python...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo "Opened Microsoft Store. Waiting for completion..."
+echo The Microsoft Store has been opened. Please install Python from there.
+echo Once you have completed the installation, press Enter to continue.
 pause
 goto check_python_en
 
@@ -123,7 +124,8 @@ echo ===========================================================================
 echo Python wird installiert...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo "Opened Microsoft Store. Waiting for completion..."
+echo Der Microsoft Store wurde geöffnet. Bitte installieren Sie Python dort.
+echo Sobald die Installation abgeschlossen ist, drücken Sie Enter, um fortzufahren.
 pause
 goto check_python_de
 
@@ -133,7 +135,8 @@ echo ===========================================================================
 echo Installation de Python...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo "Opened Microsoft Store. Waiting for completion..."
+echo Le Microsoft Store a été ouvert. Veuillez installer Python à partir de là.
+echo Une fois l'installation terminée, appuyez sur Entrée pour continuer.
 pause
 goto check_python_fr
 
