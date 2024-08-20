@@ -8,6 +8,15 @@ set logfile=log.txt
 rem Start logging
 echo ==== Starting setup.bat ====> %logfile%
 
+rem Check if the script is running with administrator privileges
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo This script requires administrative privileges. Relaunching with elevation...
+    set "params=%*"
+    powershell -Command "Start-Process cmd -ArgumentList '/c %~0 %params%' -Verb RunAs"
+    exit /b
+)
+
 :select_language
 cls
 echo ================================================================================
@@ -71,10 +80,20 @@ if %errorlevel% == 0 (
     pause >nul
     goto install_modules_en
 ) else (
-    echo Python is not installed!
-    set /p install_python="Would you like to install Python now? (Y/N): "
-    if /i "%install_python%"=="Y" goto install_python_en
-    goto end
+    echo Python is not installed or not found in PATH!
+    echo Checking for Microsoft Store Python entry...
+    if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
+        echo Detected Microsoft Store Python installation link.
+        echo Please ensure Python is installed or available in PATH.
+        set /p install_python="Would you like to install Python via winget? (Y/N): "
+        if /i "%install_python%"=="Y" goto install_python_en
+        goto end
+    ) else (
+        echo No Python installation found.
+        set /p install_python="Would you like to install Python via winget? (Y/N): "
+        if /i "%install_python%"=="Y" goto install_python_en
+        goto end
+    )
 )
 
 :check_python_de
@@ -89,10 +108,20 @@ if %errorlevel% == 0 (
     pause >nul
     goto install_modules_de
 ) else (
-    echo Python ist nicht installiert!
-    set /p install_python="Möchten Sie Python jetzt installieren? (J/N): "
-    if /i "%install_python%"=="J" goto install_python_de
-    goto end
+    echo Python ist nicht installiert oder nicht im PATH gefunden!
+    echo Überprüfe Microsoft Store Python-Verknüpfung...
+    if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
+        echo Microsoft Store Python-Installationsverknüpfung erkannt.
+        echo Bitte stellen Sie sicher, dass Python installiert oder im PATH verfügbar ist.
+        set /p install_python="Möchten Sie Python über winget installieren? (J/N): "
+        if /i "%install_python%"=="J" goto install_python_de
+        goto end
+    ) else (
+        echo Keine Python-Installation gefunden.
+        set /p install_python="Möchten Sie Python über winget installieren? (J/N): "
+        if /i "%install_python%"=="J" goto install_python_de
+        goto end
+    )
 )
 
 :check_python_fr
@@ -107,10 +136,20 @@ if %errorlevel% == 0 (
     pause >nul
     goto install_modules_fr
 ) else (
-    echo Python n'est pas installé!
-    set /p install_python="Voulez-vous installer Python maintenant? (O/N): "
-    if /i "%install_python%"=="O" goto install_python_fr
-    goto end
+    echo Python n'est pas installé ou introuvable dans PATH!
+    echo Vérification de l'entrée Python du Microsoft Store...
+    if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
+        echo Lien d'installation Python du Microsoft Store détecté.
+        echo Veuillez vous assurer que Python est installé ou disponible dans PATH.
+        set /p install_python="Voulez-vous installer Python via winget? (O/N): "
+        if /i "%install_python%"=="O" goto install_python_fr
+        goto end
+    ) else (
+        echo Aucune installation de Python trouvée.
+        set /p install_python="Voulez-vous installer Python via winget? (O/N): "
+        if /i "%install_python%"=="O" goto install_python_fr
+        goto end
+    )
 )
 
 :install_python_en
@@ -127,7 +166,7 @@ if %errorlevel% neq 0 (
     pause
     goto end
 )
-goto install_modules_en
+goto check_python_en
 
 :install_python_de
 cls
@@ -143,7 +182,7 @@ if %errorlevel% neq 0 (
     pause
     goto end
 )
-goto install_modules_de
+goto check_python_de
 
 :install_python_fr
 cls
@@ -159,7 +198,7 @@ if %errorlevel% neq 0 (
     pause
     goto end
 )
-goto install_modules_fr
+goto check_python_fr
 
 :install_modules_en
 cls
@@ -221,13 +260,12 @@ if %errorlevel% == 0 (
     echo ================================================================================
 ) else (
     echo ================================================================================
-    echo Erreur lors de l'installation des modules. Veuillez vérifier %logfile% pour plus de détails.
+    echo Erreur lors de l'installation des modules. Veuillez vérifier %logfile% pour les détails.
     echo ================================================================================
 )
 pause
 goto end
 
 :end
-echo ==== Script ended ==== >> %logfile%
+echo ==== Script ended ====> %logfile%
 exit
-
