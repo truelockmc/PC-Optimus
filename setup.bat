@@ -112,9 +112,16 @@ cls
 echo ================================================================================
 echo Installing Python...
 echo ================================================================================
+echo Attempting to open the Microsoft Store to install Python...
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo The Microsoft Store has been opened. Please install Python from there.
-echo Once you have completed the installation, press Enter to continue.
+if %errorlevel% neq 0 (
+    echo The Microsoft Store did not open successfully. Please check for errors.
+) else (
+    echo Microsoft Store opened successfully.
+)
+echo If the Microsoft Store does not open, please install Python manually.
+echo Press Enter once the installation is complete or if the Store did not open.
+timeout /t 15 /nobreak >nul
 pause
 goto check_python_en
 
@@ -123,9 +130,16 @@ cls
 echo ================================================================================
 echo Python wird installiert...
 echo ================================================================================
+echo Versuch, den Microsoft Store zum Installieren von Python zu öffnen...
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo Der Microsoft Store wurde geöffnet. Bitte installieren Sie Python dort.
-echo Sobald die Installation abgeschlossen ist, drücken Sie Enter, um fortzufahren.
+if %errorlevel% neq 0 (
+    echo Der Microsoft Store konnte nicht erfolgreich geöffnet werden. Bitte überprüfen Sie auf Fehler.
+) else (
+    echo Microsoft Store wurde erfolgreich geöffnet.
+)
+echo Falls der Microsoft Store nicht geöffnet wird, installieren Sie Python bitte manuell.
+echo Drücken Sie Enter, sobald die Installation abgeschlossen ist oder wenn der Store nicht geöffnet wurde.
+timeout /t 15 /nobreak >nul
 pause
 goto check_python_de
 
@@ -134,9 +148,16 @@ cls
 echo ================================================================================
 echo Installation de Python...
 echo ================================================================================
+echo Tentative d'ouverture du Microsoft Store pour installer Python...
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo Le Microsoft Store a été ouvert. Veuillez installer Python à partir de là.
-echo Une fois l'installation terminée, appuyez sur Entrée pour continuer.
+if %errorlevel% neq 0 (
+    echo Le Microsoft Store n'a pas pu s'ouvrir correctement. Veuillez vérifier les erreurs.
+) else (
+    echo Microsoft Store ouvert avec succès.
+)
+echo Si le Microsoft Store ne s'ouvre pas, veuillez installer Python manuellement.
+echo Appuyez sur Entrée une fois l'installation terminée ou si le Store ne s'ouvre pas.
+timeout /t 15 /nobreak >nul
 pause
 goto check_python_fr
 
