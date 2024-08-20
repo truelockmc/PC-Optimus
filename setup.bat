@@ -7,13 +7,13 @@ set logfile=log.txt
 
 rem Start logging
 echo ==== Starting setup.bat ====> %logfile%
+echo ==== Starting setup.bat ====> %logfile% >> %logfile%
 
 rem Check if the script is running with administrator privileges
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-    echo This script requires administrative privileges. Relaunching with elevation...
-    set "params=%*"
-    powershell -Command "Start-Process cmd -ArgumentList '/c %~0 %params%' -Verb RunAs"
+    echo This script requires administrative privileges. Relaunching with elevation... >> %logfile%
+    powershell -Command "Start-Process cmd -ArgumentList '/c %~0 %*' -Verb RunAs" >> %logfile% 2>&1
     exit /b
 )
 
@@ -80,18 +80,18 @@ if %errorlevel% == 0 (
     pause >nul
     goto install_modules_en
 ) else (
-    echo Python is not installed or not found in PATH!
-    echo Checking for Microsoft Store Python entry...
+    echo Python is not installed or not found in PATH! >> %logfile%
+    echo Checking for Microsoft Store Python entry... >> %logfile%
     if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
-        echo Detected Microsoft Store Python installation link.
-        echo Please ensure Python is installed or available in PATH.
+        echo Detected Microsoft Store Python installation link. >> %logfile%
+        echo Please ensure Python is installed or available in PATH. >> %logfile%
         set /p install_python="Would you like to install Python via winget? (Y/N): "
-        if /i "%install_python%"=="Y" goto install_python_en
+        if /i "%install_python%"=="Y" goto check_winget_en
         goto end
     ) else (
-        echo No Python installation found.
+        echo No Python installation found. >> %logfile%
         set /p install_python="Would you like to install Python via winget? (Y/N): "
-        if /i "%install_python%"=="Y" goto install_python_en
+        if /i "%install_python%"=="Y" goto check_winget_en
         goto end
     )
 )
@@ -108,18 +108,18 @@ if %errorlevel% == 0 (
     pause >nul
     goto install_modules_de
 ) else (
-    echo Python ist nicht installiert oder nicht im PATH gefunden!
-    echo Überprüfe Microsoft Store Python-Verknüpfung...
+    echo Python ist nicht installiert oder nicht im PATH gefunden! >> %logfile%
+    echo Überprüfe Microsoft Store Python-Verknüpfung... >> %logfile%
     if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
-        echo Microsoft Store Python-Installationsverknüpfung erkannt.
-        echo Bitte stellen Sie sicher, dass Python installiert oder im PATH verfügbar ist.
+        echo Microsoft Store Python-Installationsverknüpfung erkannt. >> %logfile%
+        echo Bitte stellen Sie sicher, dass Python installiert oder im PATH verfügbar ist. >> %logfile%
         set /p install_python="Möchten Sie Python über winget installieren? (J/N): "
-        if /i "%install_python%"=="J" goto install_python_de
+        if /i "%install_python%"=="J" goto check_winget_de
         goto end
     ) else (
-        echo Keine Python-Installation gefunden.
+        echo Keine Python-Installation gefunden. >> %logfile%
         set /p install_python="Möchten Sie Python über winget installieren? (J/N): "
-        if /i "%install_python%"=="J" goto install_python_de
+        if /i "%install_python%"=="J" goto check_winget_de
         goto end
     )
 )
@@ -136,81 +136,132 @@ if %errorlevel% == 0 (
     pause >nul
     goto install_modules_fr
 ) else (
-    echo Python n'est pas installé ou introuvable dans PATH!
-    echo Vérification de l'entrée Python du Microsoft Store...
+    echo Python n'est pas installé ou introuvable dans PATH! >> %logfile%
+    echo Vérification de l'entrée Python du Microsoft Store... >> %logfile%
     if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
-        echo Lien d'installation Python du Microsoft Store détecté.
-        echo Veuillez vous assurer que Python est installé ou disponible dans PATH.
+        echo Lien d'installation Python du Microsoft Store détecté. >> %logfile%
+        echo Veuillez vous assurer que Python est installé ou disponible dans PATH. >> %logfile%
         set /p install_python="Voulez-vous installer Python via winget? (O/N): "
-        if /i "%install_python%"=="O" goto install_python_fr
+        if /i "%install_python%"=="O" goto check_winget_fr
         goto end
     ) else (
-        echo Aucune installation de Python trouvée.
+        echo Aucune installation de Python trouvée. >> %logfile%
         set /p install_python="Voulez-vous installer Python via winget? (O/N): "
-        if /i "%install_python%"=="O" goto install_python_fr
+        if /i "%install_python%"=="O" goto check_winget_fr
         goto end
     )
 )
+
+:check_winget_en
+cls
+echo ================================================================================
+echo Checking if winget is installed...
+echo ================================================================================
+winget --version >> %logfile% 2>&1
+if %errorlevel% neq 0 (
+    echo ================================================================================
+    echo Winget is not installed. Please install it manually from:
+    echo https://aka.ms/getwinget and restart the script.
+    echo ================================================================================
+    echo ==== Error during winget check ====> %logfile%
+    pause
+    goto end
+)
+goto install_python_en
+
+:check_winget_de
+cls
+echo ================================================================================
+echo Überprüfe ob winget installiert ist...
+echo ================================================================================
+winget --version >> %logfile% 2>&1
+if %errorlevel% neq 0 (
+    echo ================================================================================
+    echo Winget ist nicht installiert. Bitte installieren Sie es manuell von:
+    echo https://aka.ms/getwinget und starten Sie das Skript erneut.
+    echo ================================================================================
+    echo ==== Fehler beim winget-Check ====> %logfile%
+    pause
+    goto end
+)
+goto install_python_de
+
+:check_winget_fr
+cls
+echo ================================================================================
+echo Vérification si winget est installé...
+echo ================================================================================
+winget --version >> %logfile% 2>&1
+if %errorlevel% neq 0 (
+    echo ================================================================================
+    echo Winget n'est pas installé. Veuillez l'installer manuellement à partir de :
+    echo https://aka.ms/getwinget et redémarrez le script.
+    echo ================================================================================
+    echo ==== Erreur lors de la vérification de winget ====> %logfile%
+    pause
+    goto end
+)
+goto install_python_fr
 
 :install_python_en
 cls
 echo ================================================================================
 echo Installing Python...
 echo ================================================================================
-echo Starting Python installation via winget... >>%logfile%
-start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
+echo Starting Python installation via winget... >> %logfile%
+start /wait cmd /c "winget install Python.Python.3.12 --silent --wait" >> %logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Python installation failed. Please install Python manually and restart the script.
     echo ================================================================================
-    echo ==== Error during Python installation ====> %logfile%
+    echo ==== Python installation failed ====> %logfile%
     pause
     goto end
 )
-goto check_python_en
+goto install_modules_en
 
 :install_python_de
 cls
 echo ================================================================================
 echo Python wird installiert...
 echo ================================================================================
-echo Starte Python-Installation über winget... >>%logfile%
-start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
+echo Starte Python-Installation über winget... >> %logfile%
+start /wait cmd /c "winget install Python.Python.3.12 --silent --wait" >> %logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Fehler bei der Python-Installation. Bitte installieren Sie Python manuell und starten Sie das Skript erneut.
     echo ================================================================================
-    echo ==== Fehler während der Python-Installation ====> %logfile%
+    echo ==== Python-Installation fehlgeschlagen ====> %logfile%
     pause
     goto end
 )
-goto check_python_de
+goto install_modules_de
 
 :install_python_fr
 cls
 echo ================================================================================
 echo Installation de Python...
 echo ================================================================================
-echo Démarrage de l'installation de Python via winget... >>%logfile%
-start /wait winget install Python.Python.3.12 --silent --wait >>%logfile% 2>&1
+echo Démarrage de l'installation de Python via winget... >> %logfile%
+start /wait cmd /c "winget install Python.Python.3.12 --silent --wait" >> %logfile% 2>&1
 if %errorlevel% neq 0 (
     echo ================================================================================
     echo Échec de l'installation de Python. Veuillez installer Python manuellement et redémarrer le script.
     echo ================================================================================
-    echo ==== Erreur pendant l'installation de Python ====> %logfile%
+    echo ==== Échec de l'installation de Python ====> %logfile%
     pause
     goto end
 )
-goto check_python_fr
+goto install_modules_fr
 
 :install_modules_en
 cls
 echo ================================================================================
 echo Installing required Python modules...
 echo ================================================================================
-python -m ensurepip --upgrade >>%logfile% 2>&1
-python -m pip install --upgrade pip >>%logfile% 2>&1
-python -m pip install speedtest-cli chardet psutil wmi >>%logfile% 2>&1
+python -m ensurepip --upgrade >> %logfile% 2>&1
+python -m pip install --upgrade pip >> %logfile% 2>&1
+python -m pip install speedtest-cli chardet psutil wmi >> %logfile% 2>&1
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -230,9 +281,9 @@ cls
 echo ================================================================================
 echo Installiere notwendige Python-Module...
 echo ================================================================================
-python -m ensurepip --upgrade >>%logfile% 2>&1
-python -m pip install --upgrade pip >>%logfile% 2>&1
-python -m pip install speedtest-cli chardet psutil wmi >>%logfile% 2>&1
+python -m ensurepip --upgrade >> %logfile% 2>&1
+python -m pip install --upgrade pip >> %logfile% 2>&1
+python -m pip install speedtest-cli chardet psutil wmi >> %logfile% 2>&1
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -252,9 +303,9 @@ cls
 echo ================================================================================
 echo Installation des modules Python nécessaires...
 echo ================================================================================
-python -m ensurepip --upgrade >>%logfile% 2>&1
-python -m pip install --upgrade pip >>%logfile% 2>&1
-python -m pip install speedtest-cli chardet psutil wmi >>%logfile% 2>&1
+python -m ensurepip --upgrade >> %logfile% 2>&1
+python -m pip install --upgrade pip >> %logfile% 2>&1
+python -m pip install speedtest-cli chardet psutil wmi >> %logfile% 2>&1
 
 if %errorlevel% == 0 (
     echo ================================================================================
@@ -271,4 +322,5 @@ goto end
 
 :end
 echo ==== Script ended ====> %logfile%
+echo ==== Script ended ====> %logfile% >> %logfile%
 exit
