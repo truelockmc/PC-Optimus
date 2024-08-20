@@ -4,7 +4,7 @@ If you need Help or if your getting Errors feel free to go to https://discord.gg
 Setup:
 -
 If your using the .py File:
--Download setup.bat and PC-Optimus.py in the newest Version https://github.com/truelockmc/PC-Optimus/releases
+-Download setup.bat, install_python.ps1 and PC-Optimus.py in the newest Version https://github.com/truelockmc/PC-Optimus/releases
 -run setup.bat (Automatically Installs Python if you havent already, and the Modules for you)
 -if you dont want to use setup.bat, do manually install Python and the Modules
 -run PCOptimus.py
