@@ -81,17 +81,22 @@ if %errorlevel% == 0 (
     goto install_modules_en
 ) else (
     echo Python is not installed or not found in PATH! >> %logfile%
-    echo Checking for Microsoft Store Python entry... >> %logfile%
-    if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
-        echo Detected Microsoft Store Python installation link. >> %logfile%
-        echo Please ensure Python is installed or available in PATH. >> %logfile%
-        set /p install_python="Would you like to install Python via winget? (Y/N): "
-        if /i "%install_python%"=="Y" goto check_winget_en
+    echo Python is not installed, but needed to run .py files. Do you want to install Python now? >> %logfile%
+    set /p install_python="(Y/N): "
+    if /i "%install_python%"=="Y" (
+        echo Opening Python 3.12 installation page in Microsoft Store... >> %logfile%
+        start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
+        echo Please press Install in the Microsoft Store to install Python. >> %logfile%
+        echo ================================================================================
+        echo Please press Install in the Microsoft Store to install Python.
+        echo ================================================================================
+        pause
         goto end
     ) else (
-        echo No Python installation found. >> %logfile%
-        set /p install_python="Would you like to install Python via winget? (Y/N): "
-        if /i "%install_python%"=="Y" goto check_winget_en
+        echo ================================================================================
+        echo Please install Python manually or you won’t be able to use PCOptimus.
+        echo ================================================================================
+        pause
         goto end
     )
 )
@@ -109,17 +114,22 @@ if %errorlevel% == 0 (
     goto install_modules_de
 ) else (
     echo Python ist nicht installiert oder nicht im PATH gefunden! >> %logfile%
-    echo Überprüfe Microsoft Store Python-Verknüpfung... >> %logfile%
-    if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
-        echo Microsoft Store Python-Installationsverknüpfung erkannt. >> %logfile%
-        echo Bitte stellen Sie sicher, dass Python installiert oder im PATH verfügbar ist. >> %logfile%
-        set /p install_python="Möchten Sie Python über winget installieren? (J/N): "
-        if /i "%install_python%"=="J" goto check_winget_de
+    echo Python ist nicht installiert, wird jedoch benötigt, um .py-Dateien auszuführen. Möchten Sie Python jetzt installieren? >> %logfile%
+    set /p install_python="(J/N): "
+    if /i "%install_python%"=="J" (
+        echo Öffne Python 3.12 Installationsseite im Microsoft Store... >> %logfile%
+        start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
+        echo Bitte klicken Sie auf Installieren im Microsoft Store, um Python zu installieren. >> %logfile%
+        echo ================================================================================
+        echo Bitte klicken Sie auf Installieren im Microsoft Store, um Python zu installieren.
+        echo ================================================================================
+        pause
         goto end
     ) else (
-        echo Keine Python-Installation gefunden. >> %logfile%
-        set /p install_python="Möchten Sie Python über winget installieren? (J/N): "
-        if /i "%install_python%"=="J" goto check_winget_de
+        echo ================================================================================
+        echo Bitte installieren Sie Python manuell oder Sie können PCOptimus nicht verwenden.
+        echo ================================================================================
+        pause
         goto end
     )
 )
@@ -137,122 +147,25 @@ if %errorlevel% == 0 (
     goto install_modules_fr
 ) else (
     echo Python n'est pas installé ou introuvable dans PATH! >> %logfile%
-    echo Vérification de l'entrée Python du Microsoft Store... >> %logfile%
-    if exist "C:\Users\%USERNAME%\AppData\Local\Microsoft\WindowsApps\python.exe" (
-        echo Lien d'installation Python du Microsoft Store détecté. >> %logfile%
-        echo Veuillez vous assurer que Python est installé ou disponible dans PATH. >> %logfile%
-        set /p install_python="Voulez-vous installer Python via winget? (O/N): "
-        if /i "%install_python%"=="O" goto check_winget_fr
+    echo Python n'est pas installé, mais est nécessaire pour exécuter des fichiers .py. Voulez-vous installer Python maintenant? >> %logfile%
+    set /p install_python="(O/N): "
+    if /i "%install_python%"=="O" (
+        echo Ouverture de la page d'installation de Python 3.12 dans le Microsoft Store... >> %logfile%
+        start ms-windows-store://pdp/?productid=9PJPW5LD2B5P
+        echo Veuillez appuyer sur Installer dans le Microsoft Store pour installer Python. >> %logfile%
+        echo ================================================================================
+        echo Veuillez appuyer sur Installer dans le Microsoft Store pour installer Python.
+        echo ================================================================================
+        pause
         goto end
     ) else (
-        echo Aucune installation de Python trouvée. >> %logfile%
-        set /p install_python="Voulez-vous installer Python via winget? (O/N): "
-        if /i "%install_python%"=="O" goto check_winget_fr
+        echo ================================================================================
+        echo Veuillez installer Python manuellement ou vous ne pourrez pas utiliser PCOptimus.
+        echo ================================================================================
+        pause
         goto end
     )
 )
-
-:check_winget_en
-cls
-echo ================================================================================
-echo Checking if winget is installed...
-echo ================================================================================
-winget --version >> %logfile% 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Winget is not installed. Please install it manually from:
-    echo https://aka.ms/getwinget and restart the script.
-    echo ================================================================================
-    echo ==== Error during winget check ====> %logfile%
-    pause
-    goto end
-)
-goto install_python_en
-
-:check_winget_de
-cls
-echo ================================================================================
-echo Überprüfe ob winget installiert ist...
-echo ================================================================================
-winget --version >> %logfile% 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Winget ist nicht installiert. Bitte installieren Sie es manuell von:
-    echo https://aka.ms/getwinget und starten Sie das Skript erneut.
-    echo ================================================================================
-    echo ==== Fehler beim winget-Check ====> %logfile%
-    pause
-    goto end
-)
-goto install_python_de
-
-:check_winget_fr
-cls
-echo ================================================================================
-echo Vérification si winget est installé...
-echo ================================================================================
-winget --version >> %logfile% 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Winget n'est pas installé. Veuillez l'installer manuellement à partir de :
-    echo https://aka.ms/getwinget et redémarrez le script.
-    echo ================================================================================
-    echo ==== Erreur lors de la vérification de winget ====> %logfile%
-    pause
-    goto end
-)
-goto install_python_fr
-
-:install_python_en
-cls
-echo ================================================================================
-echo Installing Python...
-echo ================================================================================
-echo Starting Python installation via winget... >> %logfile%
-start /wait cmd /c "winget install Python.Python.3.12 --silent --wait" >> %logfile% 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Python installation failed. Please install Python manually and restart the script.
-    echo ================================================================================
-    echo ==== Python installation failed ====> %logfile%
-    pause
-    goto end
-)
-goto install_modules_en
-
-:install_python_de
-cls
-echo ================================================================================
-echo Python wird installiert...
-echo ================================================================================
-echo Starte Python-Installation über winget... >> %logfile%
-start /wait cmd /c "winget install Python.Python.3.12 --silent --wait" >> %logfile% 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Fehler bei der Python-Installation. Bitte installieren Sie Python manuell und starten Sie das Skript erneut.
-    echo ================================================================================
-    echo ==== Python-Installation fehlgeschlagen ====> %logfile%
-    pause
-    goto end
-)
-goto install_modules_de
-
-:install_python_fr
-cls
-echo ================================================================================
-echo Installation de Python...
-echo ================================================================================
-echo Démarrage de l'installation de Python via winget... >> %logfile%
-start /wait cmd /c "winget install Python.Python.3.12 --silent --wait" >> %logfile% 2>&1
-if %errorlevel% neq 0 (
-    echo ================================================================================
-    echo Échec de l'installation de Python. Veuillez installer Python manuellement et redémarrer le script.
-    echo ================================================================================
-    echo ==== Échec de l'installation de Python ====> %logfile%
-    pause
-    goto end
-)
-goto install_modules_fr
 
 :install_modules_en
 cls
