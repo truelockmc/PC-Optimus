@@ -59,7 +59,7 @@ echo ===========================================================================
 echo Checking Python installation...
 echo ================================================================================
 python --version >nul 2>&1
-if %errorlevel% == 0 (
+if !errorlevel! == 0 (
     echo Python is already installed.
     echo Press Enter to proceed with module installation...
     pause >nul
@@ -77,7 +77,7 @@ echo ===========================================================================
 echo Überprüfe Python-Installation...
 echo ================================================================================
 python --version >nul 2>&1
-if %errorlevel% == 0 (
+if !errorlevel! == 0 (
     echo Python ist bereits installiert.
     echo Drücke Enter um fortzufahren und die notwendigen Module zu installieren...
     pause >nul
@@ -95,7 +95,7 @@ echo ===========================================================================
 echo Vérification de l'installation de Python...
 echo ================================================================================
 python --version >nul 2>&1
-if %errorlevel% == 0 (
+if !errorlevel! == 0 (
     echo Python est déjà installé.
     echo Appuyez sur Entrée pour continuer avec l'installation des modules...
     pause >nul
@@ -113,10 +113,10 @@ echo ===========================================================================
 echo Installing Python...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-msg * press Install
+echo Press Install in the Microsoft Store.
 cls
 echo ================================================================================
-echo Press Enter when the Installation is completed...
+echo Press Enter when the installation is completed...
 echo ================================================================================
 pause
 goto check_python_en
@@ -127,7 +127,7 @@ echo ===========================================================================
 echo Python wird installiert...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-msg * Drücke Installieren
+echo Drücke Installieren im Microsoft Store.
 cls
 echo ================================================================================
 echo Drücke Enter wenn die Installation abgeschlossen ist...
@@ -141,7 +141,7 @@ echo ===========================================================================
 echo Installation de Python...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-msg * Cliquez sur Installer
+echo Cliquez sur Installer dans le Microsoft Store.
 cls
 echo ================================================================================
 echo Appuyez sur Entrée lorsque l'installation est terminée...
@@ -158,7 +158,7 @@ python -m ensurepip --upgrade
 python -m pip install --upgrade pip
 python -m pip install speedtest-cli chardet psutil wmi
 
-if %errorlevel% == 0 (
+if !errorlevel! == 0 (
     echo ================================================================================
     echo Installation of required components completed successfully!
     echo Now start the PCOptimus.py file to use the tool.
@@ -180,7 +180,7 @@ python -m ensurepip --upgrade
 python -m pip install --upgrade pip
 python -m pip install speedtest-cli chardet psutil wmi
 
-if %errorlevel% == 0 (
+if !errorlevel! == 0 (
     echo ================================================================================
     echo Installation der notwendigen Komponenten erfolgreich abgeschlossen!
     echo Starte nun die PCOptimus.py Datei, um das Tool zu nutzen.
@@ -202,7 +202,7 @@ python -m ensurepip --upgrade
 python -m pip install --upgrade pip
 python -m pip install speedtest-cli chardet psutil wmi
 
-if %errorlevel% == 0 (
+if !errorlevel! == 0 (
     echo ================================================================================
     echo Installation des composants nécessaires terminée avec succès!
     echo Lancez maintenant le fichier PCOptimus.py pour utiliser l'outil.
