@@ -113,11 +113,7 @@ echo ===========================================================================
 echo Installing Python...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo Press Install in the Microsoft Store.
-cls
-echo ================================================================================
-echo Press Enter when the installation is completed...
-echo ================================================================================
+echo "Opened Microsoft Store. Waiting for completion..."
 pause
 goto check_python_en
 
@@ -127,11 +123,7 @@ echo ===========================================================================
 echo Python wird installiert...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo Drücke Installieren im Microsoft Store.
-cls
-echo ================================================================================
-echo Drücke Enter wenn die Installation abgeschlossen ist...
-echo ================================================================================
+echo "Opened Microsoft Store. Waiting for completion..."
 pause
 goto check_python_de
 
@@ -141,11 +133,7 @@ echo ===========================================================================
 echo Installation de Python...
 echo ================================================================================
 start ms-windows-store://pdp/?productid=9ncvdn91xzqp
-echo Cliquez sur Installer dans le Microsoft Store.
-cls
-echo ================================================================================
-echo Appuyez sur Entrée lorsque l'installation est terminée...
-echo ================================================================================
+echo "Opened Microsoft Store. Waiting for completion..."
 pause
 goto check_python_fr
 
@@ -216,4 +204,6 @@ pause
 goto end
 
 :end
+echo Script has ended. Press any key to close...
+pause
 exit
