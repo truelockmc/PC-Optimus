@@ -28,6 +28,9 @@ Updating:
 -update Drivers
 
 Cleanup:
+-Remove Bloatware
+-block Microsoft Tracking
+-Cleanup Prefix
 -Open the Windows Clean Manager
 -Cleanup your Temporary Files
 -Cleanup invisible Storage consuming Files
