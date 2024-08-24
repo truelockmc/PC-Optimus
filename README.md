@@ -30,7 +30,7 @@ Updating:
 Cleanup:
 -Remove Bloatware
 -block Microsoft Tracking
--Cleanup Prefix
+-Cleanup prefetch
 -Open the Windows Clean Manager
 -Cleanup your Temporary Files
 -Cleanup invisible Storage consuming Files
