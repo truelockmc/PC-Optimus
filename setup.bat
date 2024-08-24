@@ -13,7 +13,7 @@ if %errorlevel% neq 0 goto :install_python
 echo Python is installed. Proceeding with pip and module installation...
 py -m ensurepip --upgrade
 py -m pip install --upgrade pip
-py -m pip install speedtest-cli chardet psutil wmi
+py -m pip install speedtest-cli chardet psutil requests
 if %errorlevel% neq 0 (
     echo Error occurred during module installation.
     exit /b %errorlevel%
