@@ -110,13 +110,13 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 - Introduced setup.bat for easier component installation.
 - Resolved syntax errors: [Beta 5.0 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/Beta5.0)
 
-### 1.1
+### 1.0
 - Added Debloat features for Windows 10 and 11.
 - Added features to disable Microsoft tracking.
 - Replaced the Clean Invis loading bar with progress visuals in CMD.
 - Fixed Clean Invis errors and cleaned up code.
 - Updated imports in `PCOptimus.py` and `setup.bat`.
-- Removed unnecessary imports: [1.1 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.1)
+- Removed unnecessary imports: [1.1 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.0)
 
 ## Contributing
 
