@@ -116,7 +116,7 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 - Replaced the Clean Invis loading bar with progress visuals in CMD.
 - Fixed Clean Invis errors and cleaned up code.
 - Updated imports in `PCOptimus.py` and `setup.bat`.
-- Removed unnecessary imports: [1.1 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.0)
+- Removed unnecessary imports: [1.0 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.0)
 
 ## Contributing
 
