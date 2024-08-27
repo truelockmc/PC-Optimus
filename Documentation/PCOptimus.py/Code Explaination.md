@@ -1558,9 +1558,7 @@ bloatware_list = [
     ("Twitter.Twitter", 70), ("Microsoft.549981C3F5F10", 150), ("Microsoft.3DBuilder", 120), ("Microsoft.BingFinance", 60),
     ("Microsoft.BingFoodAndDrink", 40), ("Microsoft.BingHealthAndFitness", 70), ("Microsoft.BingSports", 50),
     ("Microsoft.BingTranslator", 55), ("Microsoft.BingTravel", 50), ("Microsoft.BingWeather", 45), ("Microsoft.MicrosoftJournal", 85),
-    ("Microsoft.MicrosoftPowerBIForWindows", 150), ("Microsoft.Todos", 70), ("Microsoft.WindowsAlarms", 30),
-    ("Microsoft.WindowsMaps", 100), ("Microsoft.WindowsSoundRecorder", 15), ("Microsoft.XboxApp", 90),
-    ("MicrosoftCorporationII.MicrosoftFamily", 80), ("MicrosoftCorporationII.QuickAssist", 50), ("MSTeams", 200),
+    ("Microsoft.MicrosoftPowerBIForWindows", 150), ("Microsoft.Todos", 70), ("Microsoft.WindowsMaps", 100), ("Microsoft.WindowsSoundRecorder", 15), ("MSTeams", 200),
     ("ACGMediaPlayer", 80), ("AutodeskSketchBook", 150), ("CaesarsSlotsFreeCasino", 85), ("COOKINGFEVER", 100),
     ("CyberLinkMediaSuiteEssentials", 200), ("DisneyMagicKingdoms", 90), ("DrawboardPDF", 100), ("Duolingo-LearnLanguagesforFree", 70),
     ("FarmVille2CountryEscape", 150), ("Fitbit", 90), ("Flipboard", 70), ("HULULLC.HULUPLUS", 150),
@@ -1909,15 +1907,17 @@ This function enhances user interaction by providing a clear and straightforward
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-The `rm_Bloatware` function creates a Tkinter window for managing and uninstalling bloatware applications. Here’s a detailed breakdown of its functionality:
+# Bloatware Uninstaller: `rm_Bloatware` Function
 
-### **Function Definition:**
+The `rm_Bloatware` function creates a Tkinter window to manage and uninstall bloatware applications. This function allows users to view a list of installed applications, select unwanted apps, and uninstall them to free up storage space and improve system performance.
+
+## **Function Definition**
 
 ```python
 def rm_Bloatware():
     bloatware_window = tk.Toplevel(root)
     bloatware_window.title("Bloatware Uninstaller")
-    bloatware_window.geometry("500x500")  # Increases window size
+    bloatware_window.geometry("500x500")  # Increases the window size
     bloatware_window.configure(bg="#333")
 
     progress_label = tk.Label(bloatware_window, text="", fg="white", bg="#333")
@@ -1934,11 +1934,30 @@ def rm_Bloatware():
     
     tk.Label(bloatware_window, text="These Apps are potential unwanted Bloatware.", fg="white", bg="#333").pack(pady=10)
     
-    app_frame = tk.Frame(bloatware_window, bg="#333")
-    app_frame.pack(pady=10)
+    # Add a frame with a canvas and scrollbar for scrollable checkboxes
+    frame_container = tk.Frame(bloatware_window, bg="#333")
+    frame_container.pack(fill="both", expand=True)
 
+    canvas = tk.Canvas(frame_container, bg="#333")
+    scrollbar = tk.Scrollbar(frame_container, orient="vertical", command=canvas.yview)
+    scrollable_frame = tk.Frame(canvas, bg="#333")
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+    # Populate the scrollable frame with checkboxes
     for i, (app, size) in enumerate(installed_apps):
-        chk = tk.Checkbutton(app_frame, text=f"{app} ({size} MB)", variable=vars_[i], 
+        chk = tk.Checkbutton(scrollable_frame, text=f"{app} ({size} MB)", variable=vars_[i], 
                              fg="white", bg="#333", selectcolor="#444", activebackground="#555")
         chk.grid(row=i, column=0, sticky='w', padx=20, pady=2)
 
@@ -1973,54 +1992,81 @@ def rm_Bloatware():
     tk.Button(bloatware_window, text="Advanced Debloat+Stop Tracking", command=advanced_debloat, bg="#444", fg="white").pack(pady=20)
 ```
 
-### **Functionality Breakdown:**
+## **Functionality Breakdown**
 
-1. **Create a New Window:**
-   - `bloatware_window = tk.Toplevel(root)`: Creates a new top-level window for bloatware management, separate from the main application window.
-   - `bloatware_window.title("Bloatware Uninstaller")`: Sets the window title.
-   - `bloatware_window.geometry("500x500")`: Sets the size of the window.
-   - `bloatware_window.configure(bg="#333")`: Sets the background color of the window.
+### 1. **Create a New Window:**
+- **`bloatware_window = tk.Toplevel(root)`**: Initializes a new top-level window for managing bloatware, separate from the main application window.
+- **`bloatware_window.title("Bloatware Uninstaller")`**: Sets the title of the window to "Bloatware Uninstaller".
+- **`bloatware_window.geometry("500x500")`**: Specifies the window size to 500x500 pixels.
+- **`bloatware_window.configure(bg="#333")`**: Sets the background color of the window to a dark grey (`#333`), providing a consistent and modern look.
 
-2. **Progress Label:**
-   - `progress_label = tk.Label(bloatware_window, text="", fg="white", bg="#333")`: Creates a label for displaying progress messages.
-   - `progress_label.pack(pady=10)`: Packs the label with padding.
+### 2. **Progress Label:**
+- **`progress_label = tk.Label(...)`**: Creates a label widget to show progress messages during the uninstallation process.
+- **`progress_label.pack(pady=10)`**: Packs the label into the window with padding for spacing.
 
-3. **Check Installed Apps:**
-   - `installed_apps = check_installed_apps(progress_label)`: Retrieves a list of installed bloatware apps.
+### 3. **Check Installed Apps:**
+- **`installed_apps = check_installed_apps(progress_label)`**: Calls the function `check_installed_apps`, passing the `progress_label` to dynamically update progress as it checks for installed apps.
+- **`if not installed_apps:`**: Checks if there are no installed apps that qualify as bloatware.
+  - If true, displays a congratulatory message and a close button to exit the window.
 
-4. **Handle No Installed Apps:**
-   - If no bloatware is found, displays a congratulatory message and a close button.
+### 4. **Display Installed Apps:**
+- **Checkbox Management:**
+  - **`vars_ = [tk.IntVar() for _ in installed_apps]`**: Creates a list of `IntVar` objects to keep track of the state (checked or unchecked) of each app checkbox.
+  - **`tk.Label(...)`**: Displays a label indicating the purpose of the checkboxes.
+  
+### 5. **Scrollable Frame for Checkboxes:**
+- A frame is created with a canvas and a scrollbar to allow users to scroll through a potentially long list of applications.
+  - **`frame_container`, `canvas`, `scrollbar`, `scrollable_frame`**: These widgets work together to provide a scrollable area.
+  - **`scrollable_frame.bind(...)`**: Updates the scroll region when the frame is resized or configured.
+  - **`canvas.create_window(...)`**: Embeds the scrollable frame within the canvas, allowing it to scroll.
+  - **`scrollbar.pack(...)`**: Packs the scrollbar on the right side of the container frame.
 
-5. **Display Installed Apps:**
-   - Creates checkbuttons for each installed app, allowing users to select which apps they want to uninstall.
-   - Uses a list of `tk.IntVar` to keep track of which apps are selected.
+### 6. **Populate Scrollable Frame with Checkboxes:**
+- **`for i, (app, size) in enumerate(installed_apps):`**: Iterates through the list of installed apps and their sizes.
+- **`tk.Checkbutton(...)`**: Creates a checkbutton for each app, allowing users to select apps for uninstallation.
+- **`chk.grid(...)`**: Places each checkbutton in the scrollable frame with appropriate styling.
 
-6. **Info Label:**
-   - `label_info` updates with the total size of selected apps and potential storage savings.
+### 7. **Info Label:**
+- **`label_info`**: A label that dynamically updates to display the total size of selected apps and the amount of storage that will be freed up.
+- **`label_info.pack(pady=10)`**: Packs the label into the window with padding.
 
-7. **Handle Check Button:**
-   - `on_check` function calculates and displays the total size of selected apps.
+### 8. **Handle Check Button:**
+- **`on_check` Function:**
+  - **`selected = ...`**: Retrieves the list of selected apps and calculates their total size.
+  - **`label_info.config(...)`**: Updates the `label_info` with the calculated storage savings.
 
-8. **Handle Uninstall Button:**
-   - `on_uninstall` function processes selected apps for uninstallation.
-   - Shows a confirmation dialog (`confirm_uninstall`).
-   - Calls `uninstall_selected_apps` to perform the actual uninstallation.
-   - Provides feedback on the success or failure of the uninstallation.
+### 9. **Handle Uninstall Button:**
+- **`on_uninstall` Function:**
+  - **`checked_apps = ...`**: Retrieves a list of apps selected for uninstallation.
+  - **`messagebox.showwarning(...)`**: Displays a warning if no apps are selected.
+  - **`on_check()`**: Calls `on_check` to update the information label before proceeding.
+  - **`confirm_uninstall()`**: Shows a confirmation dialog to the user.
+  - **`uninstall_selected_apps(checked_apps)`**: Uninstalls the selected apps.
+  - **Error and Success Messages**: Displays appropriate messages based on the success or failure of the uninstallation process.
 
-9. **Buttons:**
-   - **"Uninstall selected":** Calls the `on_uninstall` function.
-   - **"Advanced Debloat+Stop Tracking":** Calls `advanced_debloat` function for additional actions.
+### 10. **Additional Buttons:**
+- **"Uninstall selected" Button**: Initiates the uninstallation process by calling `on_uninstall`.
+- **"Advanced Debloat+Stop Tracking" Button**: Calls the `advanced_debloat` function for additional system optimization actions.
 
-### **Additional Functions Required:**
+## **Additional Functions Required:**
 
-- **`check_installed_apps(progress_label)`**: Determines which bloatware apps are installed.
-- **`confirm_uninstall()`**: Shows a dialog to confirm uninstallation.
-- **`uninstall_selected_apps(checked_apps)`**: Uninstalls the selected apps.
-- **`advanced_debloat()`**: Handles advanced debloating actions.
+- **`check_installed_apps(progress_label)`**: Function that scans the system for installed apps that are potential bloatware.
+- **`confirm_uninstall()`**: Function that displays a dialog box to confirm the uninstallation of selected apps.
+- **`uninstall_selected_apps(checked_apps)`**: Function that handles the uninstallation of
 
-### **Usage:**
+ apps selected by the user.
+- **`advanced_debloat()`**: Function that provides advanced debloating options and stops tracking processes.
 
-Invoke the `rm_Bloatware` function from your main application or another part of the code to open the bloatware management window, allowing users to select and remove unwanted applications.
+## **Usage:**
+
+To use the `rm_Bloatware` function, call it from your main application or any other appropriate place in your codebase. It will open a new window allowing users to select and uninstall unwanted applications from their system, thereby freeing up storage and improving performance.
+
+```python
+# Example of how to invoke the rm_Bloatware function
+rm_Bloatware()
+```
+
+By incorporating this function, users can easily manage bloatware on their computers, enhancing their system's performance and freeing up valuable storage space.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
