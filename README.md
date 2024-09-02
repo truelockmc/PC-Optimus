@@ -119,7 +119,7 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 - Removed unnecessary imports: [1.0 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.0)
 
 ### 1.1
--Fixxed Error that if you have much bloatware installed you wont be able to click on Uninstall selected: [1.1 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.1)
+- Fixxed Error that if you have much bloatware installed you wont be able to click on Uninstall selected: [1.1 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.1)
 
 ## Contributing
 
