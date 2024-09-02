@@ -118,6 +118,9 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 - Updated imports in `PCOptimus.py` and `setup.bat`.
 - Removed unnecessary imports: [1.0 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.0)
 
+### 1.1
+-Fixxed Error that if you have much bloatware installed you wont be able to click on Uninstall selected: [1.1 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.1)
+
 ## Contributing
 
 Feel free to contribute to the project by submitting issues or pull requests. For more details, refer to the [contributing guidelines](CONTRIBUTING.md).
@@ -128,5 +131,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For additional support or to report issues, join our [Discord server](https://discord.gg/36bPs8cQ5B).
+For additional support or to report issues, join our [Discord server](https://discord.gg/36bPs8cQ5B) or contact me at anonyson@proton.me .
 
