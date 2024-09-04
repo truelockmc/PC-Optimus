@@ -18,6 +18,7 @@ import logging
 import zipfile
 import requests
 import win32com.client
+import hashlib
 
 # Logging-Konfiguration
 logging.basicConfig(filename="log.txt", level=logging.INFO, 
@@ -112,6 +113,23 @@ def get_github_raw_url(file_name):
     """Generate the raw file URL on GitHub"""
     return f"https://raw.githubusercontent.com/truelockmc/PC-Optimus/main/{file_name}"
 
+def calculate_sha256(file_path):
+    """Calculate the SHA256 hash of a file"""
+    sha256_hash = hashlib.sha256()
+    with open(file_path, "rb") as f:
+        for byte_block in iter(lambda: f.read(4096), b""):
+            sha256_hash.update(byte_block)
+    return sha256_hash.hexdigest()
+
+def calculate_sha256_from_url(url):
+    """Calculate the SHA256 hash of a file from a URL"""
+    sha256_hash = hashlib.sha256()
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        for byte_block in r.iter_content(chunk_size=4096):
+            sha256_hash.update(byte_block)
+    return sha256_hash.hexdigest()
+
 def download_file(url, local_filename):
     """Download the file and save it locally"""
     with requests.get(url, stream=True) as r:
@@ -128,11 +146,10 @@ def check_for_updates():
     for file_name, local_file in files.items():
         github_url = get_github_raw_url(file_name)
         if os.path.exists(local_file):
-            # Check the file size or content to determine differences
-            local_size = os.path.getsize(local_file)
-            r = requests.head(github_url)
-            github_size = int(r.headers.get('Content-Length', 0))
-            if local_size != github_size:
+            # Calculate local and remote file hashes
+            local_hash = calculate_sha256(local_file)
+            remote_hash = calculate_sha256_from_url(github_url)
+            if local_hash != remote_hash:
                 updates_needed.append((github_url, local_file))
         else:
             updates_needed.append((github_url, local_file))
@@ -144,7 +161,7 @@ def check_for_updates():
         if answer:
             for url, local_file in updates_needed:
                 download_file(url, local_file)
-            messagebox.showinfo("Update Complete", "All files have been successfully updated, restart the script to use the newer version.")
+            messagebox.showinfo("Update Complete", "All files have been successfully updated. Restart the script to use the newer version.")
         else:
             messagebox.showinfo("Update Declined", "No files were updated.")
         root.destroy()
