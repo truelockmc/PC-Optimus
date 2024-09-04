@@ -17,7 +17,9 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 
 4. Run `PC-Optimus.py`.
 
-5. For help, join our [Discord server](https://discord.gg/36bPs8cQ5B).
+5. If you ran it once, you can also access it from the Start Menu by searching PCOptimus
+
+6. For help, join our [Discord server](https://discord.gg/36bPs8cQ5B).
 
 ### Using the `.exe` File
 
@@ -120,6 +122,11 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 
 ### 1.1
 - Fixxed Error that if you have much bloatware installed you wont be able to click on Uninstall selected: [1.1 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.1)
+
+### 1.2
+- added automatic shortcut Creation, so you can just search for PCOptimus in the Start Menu
+- you can now also create a Shortcut for PCOptimus on your Desktop with one click
+- updated required modules in setup.bat: [1.2 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.2)
 
 ## Contributing
 
