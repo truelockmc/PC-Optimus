@@ -669,6 +669,7 @@ def rm_Bloatware():
     tk.Button(bloatware_window, text="Advanced Debloat+Stop Tracking", command=advanced_debloat, bg="#444", fg="white").pack(pady=20)
 
 create_shortcut()
+check_for_updates()
 
 # Creating the GUI
 root = tk.Tk()
