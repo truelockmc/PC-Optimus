@@ -97,7 +97,7 @@ def create_shortcut():
                                         f"The desktop shortcut '{shortcut_name}' already exists.")
         except Exception as e:
             messagebox.showerror("Error Creating Shortcut", f"Error creating the shortcut: {e}")
-			
+
 # GitHub Repository URL
 repo_url = "https://github.com/truelockmc/PC-Optimus"
 
@@ -109,11 +109,11 @@ files = {
 }
 
 def get_github_raw_url(file_name):
-    """Erstelle die Raw-Datei-URL auf GitHub"""
+    """Generate the raw file URL on GitHub"""
     return f"https://raw.githubusercontent.com/truelockmc/PC-Optimus/main/{file_name}"
 
 def download_file(url, local_filename):
-    """Lade die Datei herunter und speichere sie lokal"""
+    """Download the file and save it locally"""
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
         with open(local_filename, 'wb') as f:
@@ -122,24 +122,35 @@ def download_file(url, local_filename):
     print(f"Updated {local_filename}")
 
 def check_for_updates():
-    """Überprüfe und aktualisiere die Dateien"""
+    """Check and update the files"""
+    updates_needed = []
+    
     for file_name, local_file in files.items():
         github_url = get_github_raw_url(file_name)
         if os.path.exists(local_file):
-            # Überprüfe die Dateigröße oder den Inhalt, um Unterschiede festzustellen
+            # Check the file size or content to determine differences
             local_size = os.path.getsize(local_file)
             r = requests.head(github_url)
             github_size = int(r.headers.get('Content-Length', 0))
             if local_size != github_size:
-                print(f"Neue Version gefunden für {local_file}. Aktualisiere...")
-                download_file(github_url, local_file)
-            else:
-                print(f"{local_file} ist auf dem neuesten Stand.")
+                updates_needed.append((github_url, local_file))
         else:
-            # Datei existiert nicht lokal, also herunterladen
-            print(f"{local_file} fehlt. Lade herunter...")
-            download_file(github_url, local_file)
-			
+            updates_needed.append((github_url, local_file))
+    
+    if updates_needed:
+        root = tk.Tk()
+        root.withdraw()  # Hide main window
+        answer = messagebox.askyesno("Update Available", "Updates are available for some files. Do you want to update now?")
+        if answer:
+            for url, local_file in updates_needed:
+                download_file(url, local_file)
+            messagebox.showinfo("Update Complete", "All files have been successfully updated, restart the script to use the newer version.")
+        else:
+            messagebox.showinfo("Update Declined", "No files were updated.")
+        root.destroy()
+    else:
+        print("All files are up to date.")
+
 def clean_recycle_bin():
     try:
         if platform.system() == "Windows":
