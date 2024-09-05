@@ -32,7 +32,7 @@ if %errorlevel% neq 0 goto :install_python
 echo Python is installed. Proceeding with pip and module installation...
 py -m ensurepip --upgrade
 py -m pip install --upgrade pip
-py -m pip install speedtest-cli chardet psutil requests
+py -m pip install speedtest-cli chardet psutil requests pywin32
 if %errorlevel% neq 0 (
     echo Error occurred during module installation.
     exit /b %errorlevel%
@@ -46,7 +46,7 @@ exit /b
 ```
 - `py -m ensurepip --upgrade`: Ensures that `pip` (Python's package installer) is installed and upgraded.
 - `py -m pip install --upgrade pip`: Upgrades `pip` to the latest version.
-- `py -m pip install speedtest-cli chardet psutil requests`: Installs necessary Python modules.
+- `py -m pip install speedtest-cli chardet psutil requests pywin32`: Installs necessary Python modules.
 - `if %errorlevel% neq 0`: Checks if there was an error during module installation and exits if so.
 - `pause`: Waits for the user to press a key before proceeding.
 - `cls`: Clears the screen.
