@@ -20,6 +20,7 @@ import traceback
 import logging
 import zipfile
 import requests
+import win32com.client
 ```
 
 #### **1. Import Statements Overview**
@@ -88,6 +89,9 @@ The provided code snippet includes multiple import statements, each serving a sp
 
 19. **`import requests`**
     - **`requests`**: A popular module for making HTTP requests. It simplifies interaction with web APIs and websites by providing a simple interface for sending GET, POST, PUT, DELETE requests, and more.
+   
+20. **`import win32com.client`**
+    - **`win32com.client`**: A module from the `pywin32` library that enables Python to interact with Windows COM (Component Object Model) objects. This allows automation of Windows applications like Microsoft Office (Excel, Word, Outlook) through their COM interfaces. It is useful for automating tasks such as creating Word documents, sending emails via Outlook, or manipulating Excel spreadsheets directly from Python. In this Code it is used to create Costum shortcuts.
 
 #### **3. Summary**
 
@@ -202,6 +206,208 @@ def is_admin():
 ### **Summary**
 
 The is_admin() function is a utility that checks if the current script is being run with administrative privileges on a Windows system. It leverages the ctypes module to call a Windows API function, and handles potential errors gracefully by returning False if an error occurs or if the user lacks the necessary privileges.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### **Code Explanation for Shortcut Creation**
+
+```python
+def create_shortcut():
+    # Automatische Bestimmung des aktuellen Skript-Pfads
+    script_path = os.path.abspath(__file__)
+
+    # Python-Interpreter-Pfad
+    python_exe = sys.executable
+
+    # Befehl zum Ausführen des Skripts mit dem Python-Interpreter
+    command = f'"{python_exe}" "{script_path}"'
+
+    # Name der Verknüpfung
+    shortcut_name = 'PCOptimus'
+
+    # Speicherort der Verknüpfung im Startmenü
+    start_menu_path = os.path.join(os.environ['APPDATA'], 'Microsoft', 'Windows', 'Start Menu', 'Programs')
+    shortcut_path = os.path.join(start_menu_path, f"{shortcut_name}.lnk")
+
+    # Überprüfen, ob die Verknüpfung bereits existiert
+    if os.path.exists(shortcut_path):
+        print(f"The shortcut '{shortcut_name}' already exists at: {shortcut_path}")
+    else:
+        try:
+            # Erstellen der Verknüpfung mit win32com.client
+            shell = win32com.client.Dispatch('WScript.Shell')
+            shortcut = shell.CreateShortcut(shortcut_path)
+            shortcut.TargetPath = python_exe
+            shortcut.Arguments = f'"{script_path}"'
+            shortcut.WorkingDirectory = os.path.dirname(script_path)
+            shortcut.IconLocation = python_exe
+            shortcut.save()
+
+            print(f"Shortcut '{shortcut_name}' successfully created at: {shortcut_path}")
+
+            # Benachrichtigung und Abfrage, ob eine Desktop-Verknüpfung erstellt werden soll
+            root = tk.Tk()
+            root.withdraw()  # Verstecke das Hauptfenster
+
+            # Zeige eine Nachricht an den Benutzer
+            messagebox.showinfo("PCOptimus Shortcut Created",
+                                "PCOptimus is now available in the Start Menu.\n")
+
+            # Benutzerabfrage für die Desktop-Verknüpfung
+            if messagebox.askyesno("Create Desktop Shortcut?",
+                                   "Do you want to create a Desktop shortcut for PCOptimus?"):
+                desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+                desktop_shortcut_path = os.path.join(desktop_path, f"{shortcut_name}.lnk")
+
+                # Überprüfen, ob die Desktop-Verknüpfung bereits existiert
+                if not os.path.exists(desktop_shortcut_path):
+                    # Erstellen der Desktop-Verknüpfung
+                    desktop_shortcut = shell.CreateShortcut(desktop_shortcut_path)
+                    desktop_shortcut.TargetPath = python_exe
+                    desktop_shortcut.Arguments = f'"{script_path}"'
+                    desktop_shortcut.WorkingDirectory = os.path.dirname(script_path)
+                    desktop_shortcut.IconLocation = python_exe
+                    desktop_shortcut.save()
+                    
+                    messagebox.showinfo("Desktop Shortcut Created",
+                                        f"Desktop shortcut '{shortcut_name}' successfully created.")
+                else:
+                    messagebox.showinfo("Desktop Shortcut Exists",
+                                        f"The desktop shortcut '{shortcut_name}' already exists.")
+        except Exception as e:
+            messagebox.showerror("Error Creating Shortcut", f"Error creating the shortcut: {e}")
+```
+
+#### **1. Defining the Function to Create a Shortcut**
+
+```python
+def create_shortcut():
+```
+- **`create_shortcut()`**: This function is designed to automate the process of creating a shortcut for the current Python script. It configures all the necessary settings for placing a shortcut in the Windows Start Menu and optionally on the desktop.
+
+#### **2. Determining the Script and Python Interpreter Path**
+
+```python
+    script_path = os.path.abspath(__file__)
+    python_exe = sys.executable
+    command = f'"{python_exe}" "{script_path}"'
+```
+
+- **`script_path = os.path.abspath(__file__)`**: This command retrieves the absolute path of the script currently being executed. The `__file__` variable in Python holds the filename of the script, and `os.path.abspath()` converts this to a complete path, including the directory.
+
+- **`python_exe = sys.executable`**: This retrieves the full path to the Python interpreter being used to run the script. The `sys.executable` ensures that the same interpreter is used when the shortcut runs.
+
+- **`command = f'"{python_exe}" "{script_path}"'`**: This command constructs the full string that will be executed when the shortcut is clicked. It combines the Python interpreter and the script path into a single command.
+
+#### **3. Defining the Shortcut Name and Location**
+
+```python
+    shortcut_name = 'PCOptimus'
+    start_menu_path = os.path.join(os.environ['APPDATA'], 'Microsoft', 'Windows', 'Start Menu', 'Programs')
+    shortcut_path = os.path.join(start_menu_path, f"{shortcut_name}.lnk")
+```
+
+- **`shortcut_name = 'PCOptimus'`**: This defines the name of the shortcut to be created. In this case, the shortcut will be named `PCOptimus`.
+
+- **`start_menu_path = os.path.join(...)`**: This constructs the path to the Start Menu's `Programs` folder by combining the environment variable `APPDATA` with the Microsoft Windows Start Menu folder structure. The `os.environ` retrieves environment variables, and `os.path.join()` safely concatenates paths.
+
+- **`shortcut_path = os.path.join(...)`**: This appends the shortcut name and file extension (`.lnk`) to the Start Menu path, defining where the shortcut file will be saved.
+
+#### **4. Checking if the Shortcut Already Exists**
+
+```python
+    if os.path.exists(shortcut_path):
+        print(f"The shortcut '{shortcut_name}' already exists at: {shortcut_path}")
+```
+
+- **`os.path.exists(shortcut_path)`**: This checks whether a file or shortcut with the given name already exists at the specified path. If it does, a message is printed, and the function does not create a new shortcut.
+
+#### **5. Creating the Shortcut with `win32com.client`**
+
+```python
+    else:
+        try:
+            shell = win32com.client.Dispatch('WScript.Shell')
+            shortcut = shell.CreateShortcut(shortcut_path)
+            shortcut.TargetPath = python_exe
+            shortcut.Arguments = f'"{script_path}"'
+            shortcut.WorkingDirectory = os.path.dirname(script_path)
+            shortcut.IconLocation = python_exe
+            shortcut.save()
+```
+
+- **`shell = win32com.client.Dispatch('WScript.Shell')`**: This line uses the `win32com.client` module to interact with Windows' COM interface, specifically with `WScript.Shell`, which provides methods to create shortcuts.
+
+- **`shortcut = shell.CreateShortcut(shortcut_path)`**: Creates a new shortcut object at the specified path.
+
+- **`shortcut.TargetPath = python_exe`**: Sets the target executable of the shortcut, which is the Python interpreter.
+
+- **`shortcut.Arguments = f'"{script_path}"'`**: This passes the script's path as an argument to the Python interpreter, ensuring that the shortcut runs the correct script.
+
+- **`shortcut.WorkingDirectory = os.path.dirname(script_path)`**: Sets the working directory to the script's directory, which ensures that any relative file paths used within the script will function properly.
+
+- **`shortcut.IconLocation = python_exe`**: Assigns the Python executable as the icon for the shortcut.
+
+- **`shortcut.save()`**: Saves the shortcut to disk at the specified location.
+
+#### **6. Prompting the User to Create a Desktop Shortcut**
+
+```python
+            root = tk.Tk()
+            root.withdraw()
+            messagebox.showinfo("PCOptimus Shortcut Created", "PCOptimus is now available in the Start Menu.\n")
+            if messagebox.askyesno("Create Desktop Shortcut?", "Do you want to create a Desktop shortcut for PCOptimus?"):
+                desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+                desktop_shortcut_path = os.path.join(desktop_path, f"{shortcut_name}.lnk")
+```
+
+- **`root = tk.Tk()`**: Initializes the Tkinter GUI system. This is required to create the message box, but the main window is hidden with `root.withdraw()` to keep it from appearing.
+
+- **`messagebox.showinfo(...)`**: A pop-up dialog informs the user that the Start Menu shortcut has been created successfully.
+
+- **`messagebox.askyesno(...)`**: This dialog prompts the user to confirm if they want to create a Desktop shortcut as well.
+
+- **`desktop_path = os.path.join(...)`**: This generates the full path to the user's Desktop folder by combining the user's home directory (retrieved using `os.path.expanduser("~")`) with the Desktop folder name.
+
+#### **7. Creating the Desktop Shortcut if Confirmed by the User**
+
+```python
+                if not os.path.exists(desktop_shortcut_path):
+                    desktop_shortcut = shell.CreateShortcut(desktop_shortcut_path)
+                    desktop_shortcut.TargetPath = python_exe
+                    desktop_shortcut.Arguments = f'"{script_path}"'
+                    desktop_shortcut.WorkingDirectory = os.path.dirname(script_path)
+                    desktop_shortcut.IconLocation = python_exe
+                    desktop_shortcut.save()
+                    
+                    messagebox.showinfo("Desktop Shortcut Created",
+                                        f"Desktop shortcut '{shortcut_name}' successfully created.")
+                else:
+                    messagebox.showinfo("Desktop Shortcut Exists",
+                                        f"The desktop shortcut '{shortcut_name}' already exists.")
+```
+
+- **`if not os.path.exists(desktop_shortcut_path)`**: This checks if a shortcut already exists on the Desktop. If
+
+ it does not, the shortcut is created.
+
+- **`desktop_shortcut = shell.CreateShortcut(desktop_shortcut_path)`**: Similar to the Start Menu shortcut creation process, this creates a Desktop shortcut following the same process of setting the `TargetPath`, `Arguments`, `WorkingDirectory`, and `IconLocation`.
+
+- **`messagebox.showinfo(...)`**: Informs the user whether the Desktop shortcut was successfully created or if it already exists.
+
+#### **8. Handling Exceptions**
+
+```python
+        except Exception as e:
+            messagebox.showerror("Error Creating Shortcut", f"Error creating the shortcut: {e}")
+```
+
+- **`except Exception as e`**: This catches any errors that may occur during the shortcut creation process. If an error is encountered, a message box will display the error message, helping the user understand what went wrong.
+
+
+### **Summary**
+
+This function provides a complete automation solution for creating shortcuts in both the Start Menu and Desktop on Windows systems, making it easier for users to access and run the script.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -2326,6 +2532,8 @@ def show_main_menu():
     update_button.pack(pady=10)
     repair_button.pack(pady=10)
     help_button.pack(pady=10)
+
+create_shortcut()
 
 # Create the main application window
 root = tk.Tk()
