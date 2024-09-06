@@ -129,11 +129,11 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 - updated required modules in setup.bat: [1.2 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.2)
 
 ### 1.3
-- Fixxed 404 Error with advanced Debloat Function
+- Fixxed 404 Error with advanced Debloat Function: [1.3 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.3)
 
 ### 1.4
 - Fixxed Error that you couldn`t uninstall some Bloatware because of missing rights
-- Fixxed Error that the Internetprovider is "Unknown" when using the Connection Info Feature
+- Fixxed Error that the Internetprovider is "Unknown" when using the Connection Info Feature: [1.4 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.4)
 
 ## Contributing
 
