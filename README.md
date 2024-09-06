@@ -128,6 +128,13 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 - you can now also create a Shortcut for PCOptimus on your Desktop with one click
 - updated required modules in setup.bat: [1.2 Release](https://github.com/truelockmc/PC-Optimus/releases/tag/1.2)
 
+### 1.3
+- Fixxed 404 Error with advanced Debloat Function
+
+### 1.4
+- Fixxed Error that you couldn`t uninstall some Bloatware because of missing rights
+- Fixxed Error that the Internetprovider is "Unknown" when using the Connection Info Feature
+
 ## Contributing
 
 Feel free to contribute to the project by submitting issues or pull requests. For more details, refer to the [contributing guidelines](CONTRIBUTING.md).
