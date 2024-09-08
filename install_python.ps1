@@ -1,5 +1,5 @@
 # Set the version and download URL for Python
-$version = "3.12.6"
+$version = "3.12.5"
 $url = "https://www.python.org/ftp/python/$version/python-$version-amd64.exe"
 $logFile = "$env:TEMP\python_install_log.txt"
 
