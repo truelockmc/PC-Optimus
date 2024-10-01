@@ -48,6 +48,7 @@ PC-Optimus is a lightweight, open-source Python tool for Windows that offers var
 - Clean up prefetch data.
 - Open the Windows Clean Manager.
 - Cleanup temporary files.
+- Remove File Duplicates
 - Remove invisible storage-consuming files.
 - Preconfigured cleanup: Temporary Internet Files, file thumbnails, recycle bin, and unnecessary Windows feedback files.
 - Defragment/Optimize hard drive.
