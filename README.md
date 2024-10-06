@@ -50,7 +50,7 @@ If you need help or encounter errors, please join our [Discord server](https://d
 - Remove bloatware.
 - Block Microsoft tracking.
 - Clean up prefetch data.
-- Open the Windows Clean Manager.
+- Run the Windows Clean Manager.
 - Cleanup temporary files.
 - Remove File Duplicates
 - Remove invisible storage-consuming files.
