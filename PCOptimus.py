@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 from speedtest import Speedtest, ConfigRetrievalError
 from PIL import Image, ImageTk
+import tkinter.messagebox as messagebox
 import threading
 import platform
 import socket
@@ -10,6 +11,8 @@ import time
 import subprocess
 import webbrowser
 import os
+import re
+import chardet
 
 # Get the directory of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -53,6 +56,83 @@ def get_pc_info():
     info = cpu_info + memory_info + available_memory_info + disk_info + os_info + network_info + uptime_info
     return info
 
+# Function to retrieve network name
+def get_network_name():
+    try:
+        result = subprocess.run(['powershell', '-Command', 'Get-NetConnectionProfile | Select-Object -ExpandProperty Name'], capture_output=True, text=True)
+        network_name = result.stdout.strip()
+        return network_name if network_name else "Not connected"
+    except Exception as e:
+        log_error("Failed to retrieve network name", e)
+        return "Not connected"
+
+# Function to retrieve connection information
+def get_connection_info():
+    try:
+        ip_address = socket.gethostbyname(socket.gethostname())
+        network_name = get_network_name()
+        signal_strength = "Unknown"  # Signal strength is not easily retrievable in Windows
+        provider = "Unknown"  # Provider is not easily retrievable without third-party tools
+        return f"IP Address: {ip_address}\nNetwork Name: {network_name}\nSignal Strength: {signal_strength}\nProvider: {provider}"
+    except Exception as e:
+        log_error("Failed to retrieve connection info", e)
+        return "Failed to retrieve connection information."
+
+# Function to show simplified system info
+def show_simplified_system_info():
+    try:
+        result = subprocess.run("systeminfo", capture_output=True, text=True, shell=True)
+        lines = result.stdout.splitlines()
+        relevant_info = "\n".join([line for line in lines if "OS" in line or "Memory" in line or "CPU" in line])
+        info_window = tk.Toplevel(root)
+        info_window.title("Simplified System Info")
+        info_window.geometry("400x300")
+        text = tk.Text(info_window)
+        text.insert(tk.END, relevant_info)
+        text.config(state=tk.DISABLED)
+        text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+    except Exception as e:
+        log_error("Failed to retrieve simplified system info", e)
+        messagebox.showerror("Error", "An error occurred while retrieving simplified system info.")
+
+# Function to show detailed system info
+def show_detailed_system_info():
+    try:
+        result = subprocess.run("systeminfo", capture_output=True, text=True, shell=True)
+        info_window = tk.Toplevel(root)
+        info_window.title("Detailed System Info")
+        info_window.geometry("800x600")
+        text = tk.Text(info_window)
+        text.insert(tk.END, result.stdout)
+        text.config(state=tk.DISABLED)
+        text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+    except Exception as e:
+        log_error("Failed to retrieve detailed system info", e)
+        messagebox.showerror("Error", "An error occurred while retrieving detailed system info.")
+
+# Function to show speedtest result
+def show_speedtest_result():
+    download_speed, upload_speed, ping = get_internet_speed()
+    result = f"Download Speed: {download_speed:.2f} Mbps\nUpload Speed: {upload_speed:.2f} Mbps\nPing: {ping} ms"
+    info_window = tk.Toplevel(root)
+    info_window.title("Speedtest Result")
+    info_window.geometry("400x200")
+    text = tk.Text(info_window)
+    text.insert(tk.END, result)
+    text.config(state=tk.DISABLED)
+    text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+
+# Function to show connection info
+def show_connection_info():
+    info = get_connection_info()
+    info_window = tk.Toplevel(root)
+    info_window.title("Connection Information")
+    info_window.geometry("400x300")
+    text = tk.Text(info_window)
+    text.insert(tk.END, info)
+    text.config(state=tk.DISABLED)
+    text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+
 # Function to update the display
 def update_display():
     threading.Thread(target=update_data).start()
@@ -75,21 +155,25 @@ def show_pc_info():
     info = get_pc_info()
     messagebox.showinfo("PC Information", info)
 
-def run_command(command, success_message, always_success=False):
+import chardet
+
+def run_command(command, success_message):
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = process.communicate()
-        if process.returncode == 0 or always_success:
-            log_command(command, stdout.decode("utf-8"))
+        
+        # Erkennen der Kodierung
+        result_encoding = chardet.detect(stdout)['encoding']
+        
+        if process.returncode == 0:
+            log_command(command, stdout.decode(result_encoding, errors='ignore'))
             messagebox.showinfo("Success", success_message)
         else:
+            log_command(command, stderr.decode(result_encoding, errors='ignore'))
             raise subprocess.CalledProcessError(process.returncode, command, output=stderr)
     except Exception as e:
         log_error(f"Error running command: {command}", e)
-        if not always_success:
-            messagebox.showerror("Error", "An error occurred. Please check the log file for details.")
-        else:
-            messagebox.showinfo("Success", success_message)
+        messagebox.showerror("Error", "An error occurred. Please check the log file for details.")
 
 def run_admin_command(command, success_message):
     try:
@@ -142,6 +226,14 @@ def show_help():
     )
     messagebox.showinfo("Help", help_text)
 
+def show_info_menu():
+    clear_frame()
+    systeminfo_button.pack(pady=10)
+    advanced_systeminfo_button.pack(pady=10)
+    speedtest_button.pack(pady=10)
+    connection_button.pack(pady=10)
+    back_button.pack(pady=10)
+
 def show_clean_menu():
     clear_frame()
     clean_mngr_button.pack(pady=10)
@@ -160,6 +252,7 @@ def show_update_menu():
 
 def show_main_menu():
     clear_frame()
+    info_button.pack(pady=10)
     clean_button.pack(pady=10)
     update_button.pack(pady=10)
     help_button.pack(pady=10)
@@ -210,6 +303,16 @@ pc_info_button.pack(pady=10)
 pc_info_button.bind("<Enter>", lambda e: pc_info_button.config(relief="sunken"))
 pc_info_button.bind("<Leave>", lambda e: pc_info_button.config(relief="raised"))
 
+info_button = tk.Button(root, text="Info", command=show_info_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+systeminfo_button = tk.Button(root, text="Systeminfo", command=show_simplified_system_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+advanced_systeminfo_button = tk.Button(root, text="Advanced Systeminfo", command=show_detailed_system_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+speedtest_button = tk.Button(root, text="Speedtest", command=show_speedtest_result, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+connection_button = tk.Button(root, text="Connection", command=show_connection_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
 clean_button = tk.Button(root, text="Clean", command=show_clean_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_mngr_button = tk.Button(root, text="Clean Manager", command=lambda: run_command("cleanmgr", "Disk cleanup completed successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
@@ -218,7 +321,7 @@ wsreset_button = tk.Button(root, text="WSReset", command=lambda: run_command("ws
 
 disk_cleanup_button = tk.Button(root, text="Disk Cleanup", command=lambda: run_command("cleanmgr /sagerun:1", "Advanced Disk Cleanup completed successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-temp_cleanup_button = tk.Button(root, text="Temp Cleanup", command=lambda: run_command("rmdir /q /s %TEMP%", "Successfully deleted Temporary Files."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+temp_cleanup_button = tk.Button(root, text="Temp Cleanup", command=lambda: run_command("del /q/f/s %TEMP%\*", "Successfully deleted Temporary Files."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_invis_button = tk.Button(root, text="Clean Invis", command=clean_invis_operation, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -234,27 +337,13 @@ driver_update_button = tk.Button(root, text="Driver Update", command=lambda: run
 back_button = tk.Button(root, text="Back", command=show_main_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 help_button = tk.Button(root, text="Help", command=show_help, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
-help_button.pack(pady=10)
 
-help_button.bind("<Enter>", lambda e: help_button.config(relief="sunken"))
-help_button.bind("<Leave>", lambda e: help_button.config(relief="raised"))
-
+logo_image = load_image("logo.png", (150, 50))
+logo_label = tk.Label(root, image=logo_image, bg="#2E2E2E")
 logo_frame = tk.Frame(root, bg="#2E2E2E")
+logo_label.pack()
 logo_frame.pack(side=tk.TOP, anchor=tk.NW)
 
-youtube_logo = load_image("youtube_logo.png", (20, 20))
-youtube_button = tk.Button(logo_frame, image=youtube_logo, command=lambda: open_link("https://www.youtube.com/@true_lock?sub_confirmation=1"), bg="#2E2E2E", activebackground="#2E2E2E", borderwidth=0)
-youtube_button.pack(side=tk.LEFT, padx=5)
-
-discord_logo = load_image("discord_logo.png", (20, 20))
-discord_button = tk.Button(logo_frame, image=discord_logo, command=lambda: open_link("https://discord.com/invite/wDESTYeZy9"), bg="#2E2E2E", activebackground="#2E2E2E", borderwidth=0)
-discord_button.pack(side=tk.LEFT, padx=5)
-
-github_logo = load_image("github_logo.png", (20, 20))
-github_button = tk.Button(logo_frame, image=github_logo, command=lambda: open_link("https://github.com/truelockmc"), bg="white", activebackground="white", borderwidth=0)
-github_button.pack(side=tk.LEFT, padx=5)
-
-# Show main menu on start
 show_main_menu()
 
 root.mainloop()
