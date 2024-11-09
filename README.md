@@ -17,7 +17,7 @@ If you need help or encounter errors, please join our [Discord server](https://d
 
 2. Run `setup.bat`. This script will automatically install Python (if not already installed) and the necessary modules.
 
-3. If you prefer not to use `setup.bat`, manually install Python and run `pip3 install -r` in the Direcory you downloaded the Files.
+3. If you prefer not to use `setup.bat`, manually install Python and run `pip3 install -r requirements.txt` in the Direcory you downloaded the Files.
 
 4. Run `PC-Optimus.py`.
 
