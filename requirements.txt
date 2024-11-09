@@ -1,0 +1,5 @@
+speedtest-cli
+chardet
+psutil
+requests
+pywin32
