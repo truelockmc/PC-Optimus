@@ -50,7 +50,7 @@ If you need help or encounter errors, please join our [Discord server](https://d
 ### Cleanup
 - Remove bloatware.
 - Block Microsoft tracking.
-- Clean up Apps that start on PC Startup to make your Computer booting faster.
+- Clean up Apps that start on PC Startup to make your Computer boot faster.
 - Clean up prefetch data.
 - Run the Windows Clean Manager.
 - Cleanup temporary files.
