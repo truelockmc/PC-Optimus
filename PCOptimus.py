@@ -408,9 +408,7 @@ bloatware_list = [
     ("Twitter.Twitter", 70), ("Microsoft.549981C3F5F10", 150), ("Microsoft.3DBuilder", 120), ("Microsoft.BingFinance", 60),
     ("Microsoft.BingFoodAndDrink", 40), ("Microsoft.BingHealthAndFitness", 70), ("Microsoft.BingSports", 50),
     ("Microsoft.BingTranslator", 55), ("Microsoft.BingTravel", 50), ("Microsoft.BingWeather", 45), ("Microsoft.MicrosoftJournal", 85),
-    ("Microsoft.MicrosoftPowerBIForWindows", 150), ("Microsoft.Todos", 70), ("Microsoft.WindowsAlarms", 30),
-    ("Microsoft.WindowsMaps", 100), ("Microsoft.WindowsSoundRecorder", 15), ("Microsoft.XboxApp", 90),
-    ("MicrosoftCorporationII.MicrosoftFamily", 80), ("MicrosoftCorporationII.QuickAssist", 50), ("MSTeams", 200),
+    ("Microsoft.MicrosoftPowerBIForWindows", 150), ("Microsoft.Todos", 70), ("Microsoft.WindowsMaps", 100), ("Microsoft.WindowsSoundRecorder", 15), ("MSTeams", 200),
     ("ACGMediaPlayer", 80), ("AutodeskSketchBook", 150), ("CaesarsSlotsFreeCasino", 85), ("COOKINGFEVER", 100),
     ("CyberLinkMediaSuiteEssentials", 200), ("DisneyMagicKingdoms", 90), ("DrawboardPDF", 100), ("Duolingo-LearnLanguagesforFree", 70),
     ("FarmVille2CountryEscape", 150), ("Fitbit", 90), ("Flipboard", 70), ("HULULLC.HULUPLUS", 150),
@@ -477,7 +475,7 @@ def confirm_uninstall():
 def rm_Bloatware():
     bloatware_window = tk.Toplevel(root)
     bloatware_window.title("Bloatware Uninstaller")
-    bloatware_window.geometry("500x500")  # Erhöht die Fenstergröße
+    bloatware_window.geometry("500x500")  # Increases the window size
     bloatware_window.configure(bg="#333")
 
     progress_label = tk.Label(bloatware_window, text="", fg="white", bg="#333")
@@ -494,11 +492,30 @@ def rm_Bloatware():
     
     tk.Label(bloatware_window, text="These Apps are potential unwanted Bloatware.", fg="white", bg="#333").pack(pady=10)
     
-    app_frame = tk.Frame(bloatware_window, bg="#333")
-    app_frame.pack(pady=10)
+    # Add a frame with a canvas and scrollbar for scrollable checkboxes
+    frame_container = tk.Frame(bloatware_window, bg="#333")
+    frame_container.pack(fill="both", expand=True)
 
+    canvas = tk.Canvas(frame_container, bg="#333")
+    scrollbar = tk.Scrollbar(frame_container, orient="vertical", command=canvas.yview)
+    scrollable_frame = tk.Frame(canvas, bg="#333")
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+    # Populate the scrollable frame with checkboxes
     for i, (app, size) in enumerate(installed_apps):
-        chk = tk.Checkbutton(app_frame, text=f"{app} ({size} MB)", variable=vars_[i], 
+        chk = tk.Checkbutton(scrollable_frame, text=f"{app} ({size} MB)", variable=vars_[i], 
                              fg="white", bg="#333", selectcolor="#444", activebackground="#555")
         chk.grid(row=i, column=0, sticky='w', padx=20, pady=2)
 
@@ -531,7 +548,7 @@ def rm_Bloatware():
 
     tk.Button(bloatware_window, text="Uninstall selected", command=on_uninstall, bg="#444", fg="white").pack(pady=20)
     tk.Button(bloatware_window, text="Advanced Debloat+Stop Tracking", command=advanced_debloat, bg="#444", fg="white").pack(pady=20)
-    
+
 # Creating the GUI
 root = tk.Tk()
 root.title("PC Optimus")
