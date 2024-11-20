@@ -13,6 +13,8 @@ import webbrowser
 import os
 import re
 import chardet
+import tempfile
+import ctypes
 
 # Get the directory of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,7 +22,9 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 def clean_recycle_bin():
     try:
         if platform.system() == "Windows":
-            run_admin_command("powershell.exe -NoProfile -Command \"Clear-RecycleBin -Confirm:$true\"", "Recycle Bin cleaned successfully.")
+            # Alternativer Ansatz zur Verwendung von ctypes
+            ctypes.windll.shell32.SHEmptyRecycleBinW(None, None, 0x0007)
+            messagebox.showinfo("Success", "Recycle Bin cleaned successfully.")
         else:
             messagebox.showwarning("Warning", "This operation is only supported on Windows.")
     except Exception as e:
@@ -36,9 +40,45 @@ def defragment():
     except Exception as e:
         log_error("Failed to defragment", e)
         messagebox.showerror("Error", "An error occurred while defragmenting the disk.")
+        
+def update_apps():
+    # Batch-Befehle
+    commands = [
+        "title Updater",
+        "color a",
+        "winget source reset --force",  # Quellen zurücksetzen
+        "winget source update",  # Quellen aktualisieren
+        "winget upgrade --all --include-unknown --accept-package-agreements --accept-source-agreements --force --uninstall-previous --disable-interactivity --wait",
+        "pause"
+    ]
+    
+    # Temporäre Batch-Datei erstellen
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".bat", mode='w', encoding='utf-8') as batch_file:
+        for command in commands:
+            batch_file.write(command + "\n")
+        batch_file_path = batch_file.name
 
+    # PowerShell-Skript, um die Batch-Datei mit Adminrechten auszuführen
+    powershell_script = f'''
+    $batch_file = "{batch_file_path}"
+    Start-Process -FilePath "cmd.exe" -ArgumentList "/c `" $batch_file `"" -Verb runAs
+    '''
+    
+    # Temporäre PowerShell-Datei erstellen
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".ps1", mode='w', encoding='utf-8') as ps_file:
+        ps_file.write(powershell_script)
+        ps_file_path = ps_file.name
 
-# Function to check internet speed
+    # PowerShell-Skript ausführen
+    subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_file_path], check=True)
+
+    # Temporäre Dateien löschen
+    os.remove(ps_file_path)
+    # Die Batch-Datei wird nicht sofort gelöscht, damit das Fenster offen bleibt
+    print(f"Die Batch-Datei befindet sich unter: {batch_file_path}")
+
+    
+    # Function to check internet speed
 def get_internet_speed():
     try:
         st = Speedtest()
@@ -99,23 +139,6 @@ def get_connection_info():
         log_error("Failed to retrieve connection info", e)
         return "Failed to retrieve connection information."
 
-# Function to show simplified system info
-def show_simplified_system_info():
-    try:
-        result = subprocess.run("systeminfo", capture_output=True, text=True, shell=True)
-        lines = result.stdout.splitlines()
-        relevant_info = "\n".join([line for line in lines if "OS" in line or "Memory" in line or "CPU" in line])
-        info_window = tk.Toplevel(root)
-        info_window.title("Simplified System Info")
-        info_window.geometry("400x300")
-        text = tk.Text(info_window)
-        text.insert(tk.END, relevant_info)
-        text.config(state=tk.DISABLED)
-        text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
-    except Exception as e:
-        log_error("Failed to retrieve simplified system info", e)
-        messagebox.showerror("Error", "An error occurred while retrieving simplified system info.")
-
 # Function to show speedtest result
 def show_speedtest_result():
     download_speed, upload_speed, ping = get_internet_speed()
@@ -139,25 +162,9 @@ def show_connection_info():
     text.config(state=tk.DISABLED)
     text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
 
-# Function to update the display
-def update_display():
-    threading.Thread(target=update_data).start()
-
-def update_data():
-    download_speed, upload_speed, ping = get_internet_speed()
-    cpu_usage, total_memory, available_memory = get_system_status()
-    
-    root.after(0, update_labels, download_speed, upload_speed, ping, cpu_usage, total_memory, available_memory)
-
-def update_labels(download_speed, upload_speed, ping, cpu_usage, total_memory, available_memory):
-    internet_speed_label.config(text=f"Download Speed: {download_speed:.2f} Mbps\nUpload Speed: {upload_speed:.2f} Mbps\nPing: {ping} ms")
-    system_status_label.config(text=f"CPU Usage: {cpu_usage}%\nTotal Memory: {total_memory:.2f} GB\nAvailable Memory: {available_memory:.2f} GB")
-
 def show_pc_info():
     info = get_pc_info()
     messagebox.showinfo("PC Information", info)
-
-import chardet
 
 def run_command(command, success_message):
     try:
@@ -202,6 +209,42 @@ def run_admin_command(command, success_message):
     except Exception as e:
         log_error(f"Error running admin command: {command}", e)
         messagebox.showerror("Error", "An error occurred. Please check the log file for details.")
+        
+def health_scan():
+    # Batch-Befehle
+    commands = [
+        "title Health Scan",
+        "msg * This Tool Scans for System Errors and fixxes them",
+        "clear",
+        "sfc /scannow",
+        "DISM /Online /Cleanup-Image /RestoreHealth",
+        "pause"
+    ]
+    
+    # Temporäre Batch-Datei erstellen
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".bat", mode='w', encoding='utf-8') as batch_file:
+        for command in commands:
+            batch_file.write(command + "\n")
+        batch_file_path = batch_file.name
+
+    # PowerShell-Skript, um die Batch-Datei mit Adminrechten auszuführen
+    powershell_script = f'''
+    $batch_file = "{batch_file_path}"
+    Start-Process -FilePath "cmd.exe" -ArgumentList "/c `" $batch_file `"" -Verb runAs
+    '''
+    
+    # Temporäre PowerShell-Datei erstellen
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".ps1", mode='w', encoding='utf-8') as ps_file:
+        ps_file.write(powershell_script)
+        ps_file_path = ps_file.name
+
+    # PowerShell-Skript ausführen
+    subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_file_path], check=True)
+
+    # Temporäre Dateien löschen
+    os.remove(ps_file_path)
+    # Die Batch-Datei wird nicht sofort gelöscht, damit das Fenster offen bleibt
+    print(f"Die Batch-Datei befindet sich unter: {batch_file_path}")
 
 
 def log_command(command, output):
@@ -221,6 +264,7 @@ def open_link(url):
 
 def show_help():
     help_text = (
+        "Health Scan: Scans for System Errors and fixxes them.\n"
         "PC Info: Shows detailed information about the PC.\n"
         "Clean: Starts the Windows Disk Cleanup.\n"
         "WSReset: Resets the Microsoft Store and clears its cache.\n"
@@ -266,6 +310,7 @@ def show_main_menu():
     info_button.pack(pady=10)
     clean_button.pack(pady=10)
     update_button.pack(pady=10)
+    health_scan_button.pack(pady=10)
     help_button.pack(pady=10)
     logo_frame.pack(side=tk.TOP, anchor=tk.NW)
 
@@ -274,13 +319,45 @@ def clear_frame():
         widget.pack_forget()
     logo_frame.pack_forget()
 
-# Function to handle clean invis operation
-def clean_invis_operation():
-    info_message = "Cleaning invisible space-consuming files. Close other apps to maximize cleanup and please be patient, this process may take a while."
-    messagebox.showinfo("Cleaning", info_message)
+def update_progress_window():
+    def update_progress():
+        global process
+        start_time = time.time()
+        while process.poll() is None:  # Solange der Prozess läuft
+            elapsed_time = time.time() - start_time
+            progress = min(int((elapsed_time / 60) * 100), 100)  # Simulierter Fortschritt basierend auf der Zeit
+            progress_var.set(progress)
+            progress_label.config(text=f"{progress}%")
+            time.sleep(1)  # Wartezeit zum Aktualisieren der Fortschrittsanzeige
+        
+        progress_var.set(100)  # Setze den Fortschritt auf 100% am Ende
+        progress_label.config(text="100%")
+        progress_label.config(text="Cleaning Complete")
+        progress_bar.stop()
+
+    # Fortschrittsfenster erstellen
+    progress_window = tk.Toplevel(root)
+    progress_window.title("Progress")
+    
+    tk.Label(progress_window, text="Cleaning invisible space-consuming files. Close other apps to maximize cleanup and please be patient, this process may take a while.").pack(pady=10)
+    
+    global progress_var
+    progress_var = tk.DoubleVar()
+    progress_bar = ttk.Progressbar(progress_window, orient='horizontal', length=300, mode='determinate', variable=progress_var)
+    progress_bar.pack(pady=10)
+
+    progress_label = tk.Label(progress_window, text="0%")
+    progress_label.pack(pady=10)
+
+    # Fortschrittsanzeige im Hintergrund aktualisieren
+    threading.Thread(target=update_progress, daemon=True).start()
+
+def run_cipher_command():
+    global process
     try:
         process = subprocess.Popen("cipher /w:c", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = process.communicate()
+        
         if process.returncode == 0:
             messagebox.showinfo("Success", "Successfully deleted invisible space-consuming files.")
         else:
@@ -288,6 +365,16 @@ def clean_invis_operation():
     except Exception as e:
         log_error("Error running cipher /w:c command", e)
         messagebox.showerror("Error", "An error occurred while cleaning invisible files. Please check the log file for details.")
+
+def clean_invis_operation():
+    info_message = "Cleaning invisible space-consuming files. Close other apps to maximize cleanup and please be patient, this process may take a while."
+    messagebox.showinfo("Cleaning", info_message)
+
+    # Fortschrittsfenster öffnen
+    update_progress_window()
+
+    # Starte die `cipher /w:c` Operation in einem neuen Thread
+    threading.Thread(target=run_cipher_command, daemon=True).start()
 
 # Creating the GUI
 root = tk.Tk()
@@ -308,7 +395,7 @@ pc_info_button.bind("<Leave>", lambda e: pc_info_button.config(relief="raised"))
 
 info_button = tk.Button(root, text="Info", command=show_info_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-systeminfo_button = tk.Button(root, text="Systeminfo", command=show_simplified_system_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+systeminfo_button = tk.Button(root, text="Systeminfo", command=show_pc_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 advanced_systeminfo_button = tk.Button(root, text="Advanced Systeminfo", command=lambda: run_command("msinfo32.exe", "Successfully Retrieved Advanced Systeminfo."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -317,6 +404,8 @@ resource_monitoring_button = tk.Button(root, text="Resource Monitoring", command
 speedtest_button = tk.Button(root, text="Speedtest", command=show_speedtest_result, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 connection_button = tk.Button(root, text="Connection", command=show_connection_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+health_scan_button = tk.Button(root, text="Health Scan", command=health_scan, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_button = tk.Button(root, text="Clean", command=show_clean_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -339,11 +428,11 @@ storage_diagonistics_button = tk.Button(root, text="Storage Diagnostics", comman
 update_button = tk.Button(root, text="Update", command=show_update_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 update_button.pack(pady=10)
 
-update_apps_button = tk.Button(root, text="Update Apps", command=lambda: run_admin_command("winget upgrade --all --include-unknown", "All apps updated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+update_apps_button = tk.Button(root, text="Update Apps", command=update_apps, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-windows_update_button = tk.Button(root, text="Windows Update", command=lambda: run_admin_command("wuauclt /detectnow /updatenow", "Windows update initiated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+windows_update_button = tk.Button(root, text="Windows Update", command=lambda: run_command("wuauclt /detectnow /updatenow", "Windows update initiated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-driver_update_button = tk.Button(root, text="Driver Update", command=lambda: run_admin_command("pnputil /scan /install", "Drivers updated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+driver_update_button = tk.Button(root, text="Driver Update", command=lambda: run_command("wuauclt /detectnow /updatenow", "Drivers updated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 back_button = tk.Button(root, text="Back", command=show_main_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
