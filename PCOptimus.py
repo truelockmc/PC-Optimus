@@ -17,6 +17,27 @@ import chardet
 # Get the directory of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
+def clean_recycle_bin():
+    try:
+        if platform.system() == "Windows":
+            run_admin_command("powershell.exe -NoProfile -Command \"Clear-RecycleBin -Confirm:$true\"", "Recycle Bin cleaned successfully.")
+        else:
+            messagebox.showwarning("Warning", "This operation is only supported on Windows.")
+    except Exception as e:
+        log_error("Failed to clean recycle bin", e)
+        messagebox.showerror("Error", "An error occurred while cleaning the recycle bin.")
+
+def defragment():
+    try:
+        if platform.system() == "Windows":
+            run_command("dfrgui.exe", "Defragmentation completed successfully.")
+        else:
+            messagebox.showwarning("Warning", "This operation is only supported on Windows.")
+    except Exception as e:
+        log_error("Failed to defragment", e)
+        messagebox.showerror("Error", "An error occurred while defragmenting the disk.")
+
+
 # Function to check internet speed
 def get_internet_speed():
     try:
@@ -95,21 +116,6 @@ def show_simplified_system_info():
         log_error("Failed to retrieve simplified system info", e)
         messagebox.showerror("Error", "An error occurred while retrieving simplified system info.")
 
-# Function to show detailed system info
-def show_detailed_system_info():
-    try:
-        result = subprocess.run("systeminfo", capture_output=True, text=True, shell=True)
-        info_window = tk.Toplevel(root)
-        info_window.title("Detailed System Info")
-        info_window.geometry("800x600")
-        text = tk.Text(info_window)
-        text.insert(tk.END, result.stdout)
-        text.config(state=tk.DISABLED)
-        text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
-    except Exception as e:
-        log_error("Failed to retrieve detailed system info", e)
-        messagebox.showerror("Error", "An error occurred while retrieving detailed system info.")
-
 # Function to show speedtest result
 def show_speedtest_result():
     download_speed, upload_speed, ping = get_internet_speed()
@@ -146,10 +152,6 @@ def update_data():
 def update_labels(download_speed, upload_speed, ping, cpu_usage, total_memory, available_memory):
     internet_speed_label.config(text=f"Download Speed: {download_speed:.2f} Mbps\nUpload Speed: {upload_speed:.2f} Mbps\nPing: {ping} ms")
     system_status_label.config(text=f"CPU Usage: {cpu_usage}%\nTotal Memory: {total_memory:.2f} GB\nAvailable Memory: {available_memory:.2f} GB")
-
-def reload_data():
-    update_display()
-    messagebox.showinfo("Reload", "Data reloaded successfully.")
 
 def show_pc_info():
     info = get_pc_info()
@@ -219,7 +221,6 @@ def open_link(url):
 
 def show_help():
     help_text = (
-        "Reload: Reloads the displayed data immediately.\n"
         "PC Info: Shows detailed information about the PC.\n"
         "Clean: Starts the Windows Disk Cleanup.\n"
         "WSReset: Resets the Microsoft Store and clears its cache.\n"
@@ -229,9 +230,6 @@ def show_help():
         "Windows Update: Checks for new Windows updates.\n"
         "Driver Update: Updates all drivers.\n"
         "Clean Invis: Deletes invisible space-consuming files.\n"
-        "YouTube: Opens the YouTube channel of TrueLock.\n"
-        "Discord: Opens the Discord server of TrueLock.\n"
-        "GitHub: Opens the GitHub profile of TrueLock."
     )
     messagebox.showinfo("Help", help_text)
 
@@ -239,6 +237,7 @@ def show_info_menu():
     clear_frame()
     systeminfo_button.pack(pady=10)
     advanced_systeminfo_button.pack(pady=10)
+    resource_monitoring_button.pack(pady=10)
     speedtest_button.pack(pady=10)
     connection_button.pack(pady=10)
     back_button.pack(pady=10)
@@ -250,6 +249,9 @@ def show_clean_menu():
     disk_cleanup_button.pack(pady=10)
     temp_cleanup_button.pack(pady=10)
     clean_invis_button.pack(pady=10)
+    defragment_button.pack(pady=10)
+    storage_diagonistics_button.pack(pady=10)
+    Empty_RecycleBin_button.pack(pady=10)
     back_button.pack(pady=10)
 
 def show_update_menu():
@@ -298,14 +300,6 @@ def load_image(file, size):
     image = Image.open(image_path).resize(size, Image.LANCZOS)
     return ImageTk.PhotoImage(image)
 
-reload_icon = load_image("reload.png", (20, 20))
-
-reload_button = tk.Button(root, image=reload_icon, command=reload_data, bg="#2E2E2E", activebackground="#3E3E3E", borderwidth=1, relief="raised")
-reload_button.pack(pady=10)
-
-reload_button.bind("<Enter>", lambda e: reload_button.config(relief="sunken"))
-reload_button.bind("<Leave>", lambda e: reload_button.config(relief="raised"))
-
 pc_info_button = tk.Button(root, text="PC Info", command=show_pc_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 pc_info_button.pack(pady=10)
 
@@ -316,7 +310,9 @@ info_button = tk.Button(root, text="Info", command=show_info_menu, bg="#444", fg
 
 systeminfo_button = tk.Button(root, text="Systeminfo", command=show_simplified_system_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-advanced_systeminfo_button = tk.Button(root, text="Advanced Systeminfo", command=show_detailed_system_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+advanced_systeminfo_button = tk.Button(root, text="Advanced Systeminfo", command=lambda: run_command("msinfo32.exe", "Successfully Retrieved Advanced Systeminfo."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+resource_monitoring_button = tk.Button(root, text="Resource Monitoring", command=lambda: run_command("perfmon.exe /res", "Successfully ran Windows Resource Monitoring."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 speedtest_button = tk.Button(root, text="Speedtest", command=show_speedtest_result, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -333,6 +329,12 @@ disk_cleanup_button = tk.Button(root, text="Disk Cleanup", command=lambda: run_c
 temp_cleanup_button = tk.Button(root, text="Temp Cleanup", command=lambda: run_command("del /q/f/s %TEMP%\*", "Successfully deleted Temporary Files."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_invis_button = tk.Button(root, text="Clean Invis", command=clean_invis_operation, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+Empty_RecycleBin_button = tk.Button(root, text="Empty Recycle Bin", command=clean_recycle_bin, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+defragment_button = tk.Button(root, text="Defragment", command=defragment, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+storage_diagonistics_button = tk.Button(root, text="Storage Diagnostics", command=lambda: run_command("MdSched.exe", "Successfully ran Windows Storage Diagnostics."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 update_button = tk.Button(root, text="Update", command=show_update_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 update_button.pack(pady=10)
