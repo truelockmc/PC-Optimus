@@ -164,6 +164,8 @@ def run_command(command, success_message):
         
         # Erkennen der Kodierung
         result_encoding = chardet.detect(stdout)['encoding']
+        if result_encoding is None:
+            result_encoding = 'utf-8'  # Fallback auf eine Standardkodierung
         
         if process.returncode == 0:
             log_command(command, stdout.decode(result_encoding, errors='ignore'))
@@ -182,8 +184,14 @@ def run_admin_command(command, success_message):
             # Execute command with admin privileges
             process = subprocess.Popen(['runas', '/user:Administrator', f'{command}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             stdout, stderr = process.communicate()
+            
+            # Erkennen der Kodierung
+            result_encoding = chardet.detect(stdout)['encoding']
+            if result_encoding is None:
+                result_encoding = 'utf-8'  # Fallback auf eine Standardkodierung
+            
             if process.returncode == 0:
-                log_command(command, stdout.decode("utf-8"))
+                log_command(command, stdout.decode(result_encoding, errors='ignore'))
                 messagebox.showinfo("Success", success_message)
             else:
                 raise subprocess.CalledProcessError(process.returncode, command, output=stderr)
@@ -192,6 +200,7 @@ def run_admin_command(command, success_message):
     except Exception as e:
         log_error(f"Error running admin command: {command}", e)
         messagebox.showerror("Error", "An error occurred. Please check the log file for details.")
+
 
 def log_command(command, output):
     with open(os.path.join(script_dir, "log.txt"), "a") as f:
