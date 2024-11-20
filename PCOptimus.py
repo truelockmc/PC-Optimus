@@ -1,6 +1,6 @@
 import psutil
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from speedtest import Speedtest, ConfigRetrievalError
 from PIL import Image, ImageTk
 import tkinter.messagebox as messagebox
@@ -30,6 +30,18 @@ def clean_recycle_bin():
     except Exception as e:
         log_error("Failed to clean recycle bin", e)
         messagebox.showerror("Error", "An error occurred while cleaning the recycle bin.")
+        
+def clean_vs():
+    try:
+        if platform.system() == "Windows":
+            # Setzt die Working Set-Größe des Prozesses, um den virtuellen Speicher zu bereinigen
+            ctypes.windll.kernel32.SetProcessWorkingSetSize(-1, -1, -1)
+            messagebox.showinfo("Success", "Virtual Storage cleaned successfully.")
+        else:
+            messagebox.showwarning("Warning", "This operation is only supported on Windows.")
+    except Exception as e:
+        log_error("Failed to clean virtual Storage", e)
+        messagebox.showerror("Error", f"An error occurred while cleaning the virtual Storage: {str(e)}")
 
 def defragment():
     try:
@@ -188,27 +200,60 @@ def run_command(command, success_message):
 
 def run_admin_command(command, success_message):
     try:
-        # Check if the OS is Windows
         if platform.system() == "Windows":
-            # Execute command with admin privileges
-            process = subprocess.Popen(['runas', '/user:Administrator', f'{command}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            stdout, stderr = process.communicate()
+            # Erstellen einer temporären Batch-Datei
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".bat") as temp_batch_file:
+                # Verbergen des CMD-Fensters
+                temp_batch_file.write(f'@echo off\n'.encode('utf-8'))
+                temp_batch_file.write(f'{command}\n'.encode('utf-8'))
+                temp_batch_file.write(f'del /f /q "{temp_batch_file.name}"\n'.encode('utf-8'))
+                
+            temp_batch_file_path = temp_batch_file.name
+
+            # Ausführen der Batch-Datei mit Administratorrechten
+            shell32 = ctypes.windll.shell32
+            shell32.ShellExecuteW(None, "runas", temp_batch_file_path, None, None, 0)
             
-            # Erkennen der Kodierung
-            result_encoding = chardet.detect(stdout)['encoding']
-            if result_encoding is None:
-                result_encoding = 'utf-8'  # Fallback auf eine Standardkodierung
-            
-            if process.returncode == 0:
-                log_command(command, stdout.decode(result_encoding, errors='ignore'))
-                messagebox.showinfo("Success", success_message)
-            else:
-                raise subprocess.CalledProcessError(process.returncode, command, output=stderr)
+            # Erfolgsnachricht anzeigen
+            messagebox.showinfo("Success", success_message)
         else:
             run_command(command, success_message)
     except Exception as e:
         log_error(f"Error running admin command: {command}", e)
         messagebox.showerror("Error", "An error occurred. Please check the log file for details.")
+
+def repair_file_system():
+    # Batch-Befehle
+    commands = [
+        "title Type J",
+        "chkdsk /f",
+    ]
+    
+    # Temporäre Batch-Datei erstellen
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".bat", mode='w', encoding='utf-8') as batch_file:
+        for command in commands:
+            batch_file.write(command + "\n")
+        batch_file_path = batch_file.name
+
+    # PowerShell-Skript, um die Batch-Datei mit Adminrechten auszuführen
+    powershell_script = f'''
+    $batch_file = "{batch_file_path}"
+    Start-Process -FilePath "cmd.exe" -ArgumentList "/c `" $batch_file `"" -Verb runAs
+    '''
+    
+    # Temporäre PowerShell-Datei erstellen
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".ps1", mode='w', encoding='utf-8') as ps_file:
+        ps_file.write(powershell_script)
+        ps_file_path = ps_file.name
+
+    # PowerShell-Skript ausführen
+    subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_file_path], check=True)
+
+    # Temporäre Dateien löschen
+    os.remove(ps_file_path)
+    # Die Batch-Datei wird nicht sofort gelöscht, damit das Fenster offen bleibt
+    print(f"Die Batch-Datei befindet sich unter: {batch_file_path}")
+        
         
 def health_scan():
     # Batch-Befehle
@@ -294,7 +339,7 @@ def show_clean_menu():
     temp_cleanup_button.pack(pady=10)
     clean_invis_button.pack(pady=10)
     defragment_button.pack(pady=10)
-    storage_diagonistics_button.pack(pady=10)
+    clean_vs_button.pack(pady=10)
     Empty_RecycleBin_button.pack(pady=10)
     back_button.pack(pady=10)
 
@@ -305,12 +350,21 @@ def show_update_menu():
     driver_update_button.pack(pady=10)
     back_button.pack(pady=10)
 
+def show_repair_menu():
+    clear_frame()
+    health_scan_button.pack(pady=10)
+    storage_diagonistics_button.pack(pady=10)
+    repair_file_system_button.pack(pady=10)
+    repair_connection_button.pack(pady=10)
+    back_button.pack(pady=10)
+
+
 def show_main_menu():
     clear_frame()
     info_button.pack(pady=10)
     clean_button.pack(pady=10)
     update_button.pack(pady=10)
-    health_scan_button.pack(pady=10)
+    repair_button.pack(pady=10)
     help_button.pack(pady=10)
     logo_frame.pack(side=tk.TOP, anchor=tk.NW)
 
@@ -375,7 +429,7 @@ def clean_invis_operation():
 
     # Starte die `cipher /w:c` Operation in einem neuen Thread
     threading.Thread(target=run_cipher_command, daemon=True).start()
-
+    
 # Creating the GUI
 root = tk.Tk()
 root.title("System Utility")
@@ -393,7 +447,13 @@ pc_info_button.pack(pady=10)
 pc_info_button.bind("<Enter>", lambda e: pc_info_button.config(relief="sunken"))
 pc_info_button.bind("<Leave>", lambda e: pc_info_button.config(relief="raised"))
 
+repair_file_system_button = tk.Button(root, text="Repair File System", command=repair_file_system, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+clean_vs_button = tk.Button(root, text="Clean Virtual Storage", command=clean_vs, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
 info_button = tk.Button(root, text="Info", command=show_info_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+repair_button = tk.Button(root, text="Repair", command=show_repair_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 systeminfo_button = tk.Button(root, text="Systeminfo", command=show_pc_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -405,7 +465,7 @@ speedtest_button = tk.Button(root, text="Speedtest", command=show_speedtest_resu
 
 connection_button = tk.Button(root, text="Connection", command=show_connection_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-health_scan_button = tk.Button(root, text="Health Scan", command=health_scan, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+health_scan_button = tk.Button(root, text="Repair System Files", command=health_scan, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_button = tk.Button(root, text="Clean", command=show_clean_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -431,6 +491,8 @@ update_button.pack(pady=10)
 update_apps_button = tk.Button(root, text="Update Apps", command=update_apps, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 windows_update_button = tk.Button(root, text="Windows Update", command=lambda: run_command("wuauclt /detectnow /updatenow", "Windows update initiated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+repair_connection_button = tk.Button(root, text="Repair Connection", command=lambda: run_admin_command('ipconfig /flushdns && netsh winsock reset && netsh interface set interface name="*" admin=disable && netsh interface set interface name="*" admin=enable', "Successfully tried to Fixx Connection Errors, restart your System to complete the Process."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 driver_update_button = tk.Button(root, text="Driver Update", command=lambda: run_command("wuauclt /detectnow /updatenow", "Drivers updated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
