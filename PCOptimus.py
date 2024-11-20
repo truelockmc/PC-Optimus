@@ -1,22 +1,26 @@
-import psutil
-import tkinter as tk
 from tkinter import messagebox, ttk
 from speedtest import Speedtest, ConfigRetrievalError
+import psutil
+import tkinter as tk
 import tkinter.messagebox as messagebox
 import threading
 import platform
 import socket
 import time
 import subprocess
-import webbrowser
 import os
 import re
 import chardet
-import tempfile
 import ctypes
 import sys
-import wmi
 import traceback
+import logging
+import zipfile
+import requests
+
+# Logging-Konfiguration
+logging.basicConfig(filename="log.txt", level=logging.INFO, 
+                    format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Get the directory of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -144,14 +148,6 @@ def get_internet_speed():
         messagebox.showerror("Speedtest Error", "Failed to retrieve speedtest configuration. Please check the log file for details.")
         return 0, 0, 0
 
-# Function to check system status
-def get_system_status():
-    cpu_usage = psutil.cpu_percent(interval=1)
-    memory = psutil.virtual_memory()
-    total_memory = memory.total / (1024 ** 3)
-    available_memory = memory.available / (1024 ** 3)
-    return cpu_usage, total_memory, available_memory
-
 # Function to retrieve PC info
 def get_pc_info():
     cpu_info = f"CPU: {psutil.cpu_count(logical=False)} cores ({psutil.cpu_count()} logical processors)\n"
@@ -249,10 +245,7 @@ def log_error(message, error):
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
         f.write(f"[ERROR] [{timestamp}] {message}\n")
         f.write(f"[DETAILS] {str(error)}\n")
-
-def open_link(url):
-    webbrowser.open_new(url)
-
+		
 # Funktion zum Anzeigen der Hilfenachricht
 def show_help():
     help_text = (
@@ -301,10 +294,12 @@ def show_info_menu():
 
 def show_clean_menu():
     clear_frame()
+    rm_bloatware_button.pack(pady=10)
     clean_mngr_button.pack(pady=10)
     wsreset_button.pack(pady=10)
     disk_cleanup_button.pack(pady=10)
     temp_cleanup_button.pack(pady=10)
+    prefetch_clean_button.pack(pady=10)
     clean_invis_button.pack(pady=10)
     defragment_button.pack(pady=10)
     clean_vs_button.pack(pady=10)
@@ -339,66 +334,207 @@ def clear_frame():
     for widget in root.winfo_children():
         widget.pack_forget()
 
-def update_progress_window():
-    def update_progress():
-        global process
-        start_time = time.time()
-        while process.poll() is None:  # Solange der Prozess läuft
-            elapsed_time = time.time() - start_time
-            progress = min(int((elapsed_time / 60) * 100), 100)  # Simulierter Fortschritt basierend auf der Zeit
-            progress_var.set(progress)
-            progress_label.config(text=f"{progress}%")
-            time.sleep(1)  # Wartezeit zum Aktualisieren der Fortschrittsanzeige
+# Funktion zum Herunterladen und Entpacken des .zip-Archivs
+def download_and_extract_zip(url, extract_to='.'):
+    # Erstellen des Zielpfads für den 'debloat'-Ordner
+    debloat_folder = os.path.join(extract_to, 'debloat')
+    
+    # Überprüfen, ob der 'debloat'-Ordner existiert, und falls nicht, ihn erstellen
+    if not os.path.exists(debloat_folder):
+        os.makedirs(debloat_folder)
+
+    # Der Name der Datei, die heruntergeladen wird
+    local_filename = os.path.join(debloat_folder, 'debloat.zip')
+    
+    try:
+        # Herunterladen der Datei
+        with requests.get(url, stream=True) as r:
+            r.raise_for_status()
+            with open(local_filename, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
         
-        progress_var.set(100)  # Setze den Fortschritt auf 100% am Ende
-        progress_label.config(text="100%")
-        progress_label.config(text="Cleaning Complete")
-        progress_bar.stop()
+        # Entpacken der Datei in den 'debloat'-Ordner
+        with zipfile.ZipFile(local_filename, 'r') as zip_ref:
+            zip_ref.extractall(debloat_folder)
+        
+        # Entfernen des .zip-Archivs nach dem Entpacken
+        os.remove(local_filename)
+        
+        # Ausführen der Run.bat Datei im 'debloat'-Ordner
+        run_bat_path = os.path.join(debloat_folder, 'Run.bat')
+        subprocess.run(f'"{run_bat_path}"', shell=True)
+        
+        messagebox.showinfo("Success", "The script has been downloaded and executed successfully!")
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred: {e}")
 
-    # Fortschrittsfenster erstellen
-    progress_window = tk.Toplevel(root)
-    progress_window.title("Progress")
+# Funktion, die ausgeführt wird, wenn der Button "Advanced Debloat" angeklickt wird
+def advanced_debloat():
+    response = messagebox.askyesno(
+        "Advanced Debloat",
+        ("This will download a script powered by Raphire that provides advanced debloating functions for your PC, "
+         "including the ability to disable Microsoft tracking. "
+         "You can run the script later by going to the debloat folder and executing the Run.bat file, "
+         "which also allows you to undo any changes. However, please be careful and do not modify the code if you "
+         "are not familiar with it, as this could render the system unusable. I assume no liability. "
+         "Do you want to download and run the script?")
+    )
     
-    tk.Label(progress_window, text="Cleaning invisible space-consuming files. Close other apps to maximize cleanup and please be patient, this process may take a while.").pack(pady=10)
-    
-    global progress_var
-    progress_var = tk.DoubleVar()
-    progress_bar = ttk.Progressbar(progress_window, orient='horizontal', length=300, mode='determinate', variable=progress_var)
-    progress_bar.pack(pady=10)
+    if response:
+        # Wenn der Benutzer auf Yes klickt
+        download_link = "https://cdn.discordapp.com/attachments/1276569836947902605/1276945729407025233/HBGs7VT.zip?ex=66cb5fe2&is=66ca0e62&hm=0ef399438ef74a887ccfadc6a9a1898f23c0d8969ec386ee7b889ab26e1afa89&"  # Discord-Link hier einfügen
+        download_and_extract_zip(download_link, os.getcwd())
+    else:
+        # Wenn der Benutzer auf No klickt, einfach das Popup schließen
+        pass
+		
+# Liste der Bloatware mit den entsprechenden Paketnamen und geschätztem Speicherplatzbedarf in MB
 
-    progress_label = tk.Label(progress_window, text="0%")
+bloatware_list = [
+    ("Microsoft.BingNews", 80), ("Microsoft.GetHelp", 50), ("Microsoft.Getstarted", 40), ("Microsoft.Messaging", 60),
+    ("Microsoft.Microsoft3DViewer", 100), ("Microsoft.MicrosoftOfficeHub", 100), ("Microsoft.MicrosoftSolitaireCollection", 60),
+    ("Microsoft.NetworkSpeedTest", 70), ("Microsoft.News", 80), ("Microsoft.Office.Lens", 100), ("Microsoft.Office.OneNote", 150),
+    ("Microsoft.Office.Sway", 60), ("Microsoft.OneConnect", 70), ("Microsoft.People", 50), ("Microsoft.Print3D", 95),
+    ("Microsoft.SkypeApp", 120), ("Microsoft.Office.Todo.List", 60), ("microsoft.windowscommunicationsapps", 100),
+    ("Microsoft.WindowsFeedbackHub", 80), ("Microsoft.ZuneMusic", 150), ("Microsoft.ZuneVideo", 200), ("EclipseManager", 80),
+    ("ActiproSoftwareLLC", 90), ("Adobe.CCExpress", 200), ("AdobeSystemsIncorporated.AdobePhotoshopExpress", 150),
+    ("Clipchamp.Clipchamp", 10000), ("Facebook.Facebook", 50), ("Instagram.Instagram", 75), ("Netflix.Netflix", 120),
+    ("AmazonVideo.PrimeVideo", 130), ("Microsoft.HiddenCity", 300), ("Microsoft.MixedReality.Portal", 200),
+    ("ROBLOXCORPORATION.ROBLOX", 250), ("TikTok.TikTok", 90), ("Microsoft.AgeOfEmpiresCastleSiege", 180),
+    ("GAMELOFTSA.Asphalt8Airborne", 400), ("king.com.BubbleWitch3Saga", 110), ("king.com.CandyCrushFriends", 140),
+    ("king.com.CandyCrushSaga", 160), ("Zynga.FarmVille2CountryEscape", 150), ("Fitbit.FitbitCoach", 90),
+    ("Playrix.Gardenscapes", 100), ("PhototasticCollage", 50), ("PicsArt-Photostudio", 85), ("SpotifyAB.SpotifyMusic", 110),
+    ("Twitter.Twitter", 70), ("Microsoft.549981C3F5F10", 150), ("Microsoft.3DBuilder", 120), ("Microsoft.BingFinance", 60),
+    ("Microsoft.BingFoodAndDrink", 40), ("Microsoft.BingHealthAndFitness", 70), ("Microsoft.BingSports", 50),
+    ("Microsoft.BingTranslator", 55), ("Microsoft.BingTravel", 50), ("Microsoft.BingWeather", 45), ("Microsoft.MicrosoftJournal", 85),
+    ("Microsoft.MicrosoftPowerBIForWindows", 150), ("Microsoft.Todos", 70), ("Microsoft.WindowsAlarms", 30),
+    ("Microsoft.WindowsMaps", 100), ("Microsoft.WindowsSoundRecorder", 15), ("Microsoft.XboxApp", 90),
+    ("MicrosoftCorporationII.MicrosoftFamily", 80), ("MicrosoftCorporationII.QuickAssist", 50), ("MSTeams", 200),
+    ("ACGMediaPlayer", 80), ("AutodeskSketchBook", 150), ("CaesarsSlotsFreeCasino", 85), ("COOKINGFEVER", 100),
+    ("CyberLinkMediaSuiteEssentials", 200), ("DisneyMagicKingdoms", 90), ("DrawboardPDF", 100), ("Duolingo-LearnLanguagesforFree", 70),
+    ("FarmVille2CountryEscape", 150), ("Fitbit", 90), ("Flipboard", 70), ("HULULLC.HULUPLUS", 150),
+    ("iHeartRadio", 80), ("LinkedInforWindows", 40), ("MarchofEmpires", 110), ("PandoraMediaInc", 60),
+    ("Plex", 120), ("PolarrPhotoEditorAcademicEdition", 90), ("Royal Revolt", 100), ("Shazam", 50),
+    ("Sidia.LiveWallpaper", 60), ("SlingTV", 120), ("TuneInRadio", 70), ("Viber", 75), ("WinZipUniversal", 80),
+    ("Wunderlist", 50), ("XING", 60)
+]
+
+def run_powershell_command(command):
+    try:
+        result = subprocess.run(["powershell", "-Command", command], capture_output=True, text=True)
+        result.check_returncode()
+        logging.info(f"Command executed successfully: {command}")
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error executing command: {command} | Error: {e}")
+        return ""
+
+def check_installed_apps(progress_label):
+    installed_apps = []
+    progress_label.config(text="Checking for installed Bloatware...")
+    root.update()  # Aktualisiert das Fenster, um die Nachricht anzuzeigen
+
+    for app, size in bloatware_list:
+        if app in run_powershell_command(f"Get-AppxPackage -Name {app}"):
+            installed_apps.append((app, size))
+
+    progress_label.config(text="")
+    return installed_apps
+
+def uninstall_selected_apps(selected_apps):
+    for app, _ in selected_apps:
+        command = f"Get-AppxPackage -Name {app} | Remove-AppxPackage"
+        run_powershell_command(command)
+        
+        # Überprüfen, ob die App noch installiert ist
+        remaining = run_powershell_command(f"Get-AppxPackage -Name {app}")
+        if app not in remaining:
+            logging.info(f"Uninstalled: {app}")
+        else:
+            logging.error(f"Failed to uninstall: {app}")
+
+def confirm_uninstall():
+    dialog = tk.Toplevel(root)
+    dialog.configure(bg="#333")
+    dialog.title("Confirmation")
+    tk.Label(dialog, text="Type 'Uninstall pls' to confirm", fg="white", bg="#333").pack(pady=10)
+    entry = tk.Entry(dialog)
+    entry.pack(pady=10)
+    result = []
+
+    def on_confirm():
+        result.append(entry.get())
+        dialog.destroy()
+
+    tk.Button(dialog, text="Confirm", command=on_confirm, bg="#444", fg="white").pack(pady=10)
+    dialog.transient(root)
+    dialog.grab_set()
+    root.wait_window(dialog)
+    
+    return result[0] if result else ""
+
+def rm_Bloatware():
+    bloatware_window = tk.Toplevel(root)
+    bloatware_window.title("Bloatware Uninstaller")
+    bloatware_window.geometry("500x500")  # Erhöht die Fenstergröße
+    bloatware_window.configure(bg="#333")
+
+    progress_label = tk.Label(bloatware_window, text="", fg="white", bg="#333")
     progress_label.pack(pady=10)
 
-    # Fortschrittsanzeige im Hintergrund aktualisieren
-    threading.Thread(target=update_progress, daemon=True).start()
+    installed_apps = check_installed_apps(progress_label)
 
-def run_cipher_command():
-    global process
-    try:
-        process = subprocess.Popen("cipher /w:c", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = process.communicate()
-        
-        if process.returncode == 0:
-            messagebox.showinfo("Success", "Successfully deleted invisible space-consuming files.")
+    if not installed_apps:
+        tk.Label(bloatware_window, text="Congrats, you're Bloatware free :)", fg="white", bg="#333").pack(pady=20)
+        tk.Button(bloatware_window, text="Close", command=bloatware_window.destroy, bg="#444", fg="white").pack(pady=20)
+        return
+
+    vars_ = [tk.IntVar() for _ in installed_apps]
+    
+    tk.Label(bloatware_window, text="These Apps are potential unwanted Bloatware.", fg="white", bg="#333").pack(pady=10)
+    
+    app_frame = tk.Frame(bloatware_window, bg="#333")
+    app_frame.pack(pady=10)
+
+    for i, (app, size) in enumerate(installed_apps):
+        chk = tk.Checkbutton(app_frame, text=f"{app} ({size} MB)", variable=vars_[i], 
+                             fg="white", bg="#333", selectcolor="#444", activebackground="#555")
+        chk.grid(row=i, column=0, sticky='w', padx=20, pady=2)
+
+    label_info = tk.Label(bloatware_window, text="", fg="white", bg="#333")
+    label_info.pack(pady=10)
+
+    def on_check():
+        selected = [(app, size) for i, (app, size) in enumerate(installed_apps) if vars_[i].get() == 1]
+        total_size = sum(size for _, size in selected)
+        label_info.config(text=f"You will have more than {total_size} MB more free Storage, and your PC will be faster.")
+    
+    def on_uninstall():
+        checked_apps = [(app, size) for i, (app, size) in enumerate(installed_apps) if vars_[i].get() == 1]
+        if not checked_apps:
+            messagebox.showwarning("No Selection", "No apps selected for uninstallation.")
+            return
+
+        on_check()  # Update the info label before confirmation
+        confirmation = confirm_uninstall()
+        if confirmation == "Uninstall pls":
+            uninstall_selected_apps(checked_apps)
+            remaining_apps = check_installed_apps(progress_label)
+            if not any(app in [a[0] for a in remaining_apps] for app, _ in checked_apps):
+                messagebox.showinfo("Uninstallation Complete", "Selected apps have been uninstalled.")
+            else:
+                messagebox.showerror("Uninstallation Failed", "Some apps could not be uninstalled.")
+            bloatware_window.destroy()
         else:
-            raise subprocess.CalledProcessError(process.returncode, "cipher /w:c", output=stderr)
-    except Exception as e:
-        log_error("Error running cipher /w:c command", e)
-        messagebox.showerror("Error", "An error occurred while cleaning invisible files. Please check the log file for details.")
+            messagebox.showinfo("Uninstallation Cancelled", "No apps were uninstalled.")
 
-def clean_invis_operation():
-    info_message = "Cleaning invisible space-consuming files. Close other apps to maximize cleanup and please be patient, this process may take a while."
-    messagebox.showinfo("Cleaning", info_message)
-
-    # Fortschrittsfenster öffnen
-    update_progress_window()
-
-    # Starte die `cipher /w:c` Operation in einem neuen Thread
-    threading.Thread(target=run_cipher_command, daemon=True).start()
+    tk.Button(bloatware_window, text="Uninstall selected", command=on_uninstall, bg="#444", fg="white").pack(pady=20)
+    tk.Button(bloatware_window, text="Advanced Debloat+Stop Tracking", command=advanced_debloat, bg="#444", fg="white").pack(pady=20)
     
 # Creating the GUI
 root = tk.Tk()
-root.title("System Utility")
+root.title("PC Optimus")
 root.geometry("400x600")
 root.configure(bg="#2E2E2E")
 
@@ -432,7 +568,9 @@ disk_cleanup_button = tk.Button(root, text="Disk Cleanup", command=lambda: run_c
 
 temp_cleanup_button = tk.Button(root, text="Temp Cleanup", command=lambda: run_command(r"del /q/f/s %TEMP%\*", "Successfully deleted Temporary Files."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-clean_invis_button = tk.Button(root, text="Clean Invis", command=clean_invis_operation, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+prefetch_clean_button = tk.Button(root, text="Prefetch Cleanup", command=lambda: run_command(r"del /q/s C:\Windows\prefetch\*", "Successfully cleaned up Prefetch Files."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+clean_invis_button = tk.Button(root, text="Clean Invis", command=lambda: run_window_admin_command(r"cipher /w:c && msg * Successfully Cleaned invisible Space Consuming Files && exit", "Successfully ran Windows Cipher, please be patient, the process will take a while."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 Empty_RecycleBin_button = tk.Button(root, text="Empty Recycle Bin", command=clean_recycle_bin, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -455,6 +593,7 @@ back_button = tk.Button(root, text="Back", command=show_main_menu, bg="#444", fg
 
 help_button = tk.Button(root, text="Help", command=show_help, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
+rm_bloatware_button = tk.Button(root, text="Remove Bloatware", command=rm_Bloatware, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 show_main_menu()
 
