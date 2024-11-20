@@ -241,17 +241,25 @@ def get_network_name():
         log_error("Failed to retrieve network name", e)
         return "Not connected"
 
-# Function to retrieve connection information
+# Funktion zum Abrufen der ISP-Informationen (Internetanbieter)
+def get_provider_info():
+    try:
+        response = requests.get('https://ipinfo.io')
+        data = response.json()
+        return data.get('org', 'Unknown')  # ISP (Internetanbieter) aus den Daten extrahieren
+    except:
+        return "Unknown"
+
+# Funktion zum Abrufen der Verbindungsinformationen
 def get_connection_info():
     try:
         ip_address = socket.gethostbyname(socket.gethostname())
         network_name = get_network_name()
-        signal_strength = "Unknown"  # Signal strength is not easily retrievable in Windows
-        provider = "Unknown"  # Provider is not easily retrievable without third-party tools
+        signal_strength = "Unknown"  # Signalstärke ist in Windows nicht einfach abrufbar
+        provider = get_provider_info()  # Anbieter durch API-Aufruf ermitteln
         return f"IP Address: {ip_address}\nNetwork Name: {network_name}\nSignal Strength: {signal_strength}\nProvider: {provider}"
     except Exception as e:
-        log_error("Failed to retrieve connection info", e)
-        return "Failed to retrieve connection information."
+        return f"Failed to retrieve connection info: {e}"
 
 # Function to show speedtest result
 def show_speedtest_result():
@@ -539,6 +547,13 @@ def confirm_uninstall():
     return result[0] if result else ""
 
 def rm_Bloatware():
+    if not is_admin():
+        messagebox.showwarning("Admin Rights Required", "This action requires admin rights. The program will restart with elevated privileges.")
+        elevate()
+        root.quit()  # Altes Fenster schließen
+        os._exit(0)  # Sofort das alte Fenster beenden
+        return
+
     bloatware_window = tk.Toplevel(root)
     bloatware_window.title("Bloatware Uninstaller")
     bloatware_window.geometry("500x500")  # Increases the window size
