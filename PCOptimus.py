@@ -1,6 +1,7 @@
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, scrolledtext, Listbox, MULTIPLE, Toplevel
 from speedtest import Speedtest, ConfigRetrievalError
 import psutil
+import hashlib
 import tkinter as tk
 import tkinter.messagebox as messagebox
 import threading
@@ -136,6 +137,7 @@ def defragment():
 def elevate():
     # Hole den Pfad zur aktuellen Python-Executable
     script = os.path.abspath(sys.argv[0])
+    root.destroy()
     # Starte das Skript als Administrator neu
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, f'"{script}"', None, 1)
 
@@ -369,6 +371,7 @@ def show_info_menu():
 def show_clean_menu():
     clear_frame()
     rm_bloatware_button.pack(pady=10)
+    rm_dupe_button.pack(pady=10)
     clean_mngr_button.pack(pady=10)
     wsreset_button.pack(pady=10)
     disk_cleanup_button.pack(pady=10)
@@ -642,6 +645,104 @@ def rm_Bloatware():
 
     tk.Button(bloatware_window, text="Uninstall selected", command=on_uninstall, bg="#444", fg="white").pack(pady=20)
     tk.Button(bloatware_window, text="Advanced Debloat+Stop Tracking", command=advanced_debloat, bg="#444", fg="white").pack(pady=20)
+    
+# Function to compute the hash of a file
+def hash_file(file_path):
+    hasher = hashlib.md5()
+    try:
+        with open(file_path, 'rb') as f:
+            buf = f.read()
+            hasher.update(buf)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to read {file_path}: {str(e)}")
+        return None
+    return hasher.hexdigest()
+
+# Function to find duplicates in specified directories
+def find_duplicates(directories):
+    file_hashes = {}
+    duplicates = []
+
+    for directory in directories:
+        if not os.path.exists(directory):  # Check if directory exists
+            continue
+        for foldername, _, filenames in os.walk(directory):
+            for filename in filenames:
+                file_path = os.path.join(foldername, filename)
+                file_hash = hash_file(file_path)
+                if file_hash is None:  # Skip if hashing failed
+                    continue
+
+                if file_hash in file_hashes:
+                    duplicates.append((file_path, file_hashes[file_hash]))
+                else:
+                    file_hashes[file_hash] = file_path
+
+    return duplicates
+
+# Function to search for duplicates and display them in the sub-window
+def search_duplicates(duplicate_window, result_listbox, delete_btn):
+    directories = [
+        os.path.join(os.environ['USERPROFILE'], 'Desktop'),
+        os.path.join(os.environ['USERPROFILE'], 'Documents'),
+        os.path.join(os.environ['USERPROFILE'], 'Pictures'),
+        os.path.join(os.environ['USERPROFILE'], 'Downloads') 
+    ]
+    
+    duplicates = find_duplicates(directories)
+    
+    result_listbox.delete(0, tk.END)  # Clear previous results
+    if duplicates:
+        for pair in duplicates:
+            result_listbox.insert(tk.END, f"{pair[0]} (Duplicate of {pair[1]})")
+        delete_btn['state'] = 'normal'
+    else:
+        messagebox.showinfo("No Duplicates Found", "No duplicate files found.")
+        delete_btn['state'] = 'disabled'
+
+# Function to delete selected files
+def delete_selected_files(duplicate_window, result_listbox):
+    selected_files = result_listbox.curselection()
+    if not selected_files:
+        messagebox.showwarning("No Selection", "Please select files to delete.")
+        return
+
+    confirmation = messagebox.askyesno("Delete Files", "Are you sure you want to delete the selected files?")
+    if confirmation:
+        success = True
+        for index in selected_files[::-1]:  # Reverse the list to avoid index issues when deleting
+            file_entry = result_listbox.get(index)
+            file_path = file_entry.split(' (')[0]  # File path until first parenthesis
+            try:
+                os.remove(file_path)
+                result_listbox.delete(index)
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to delete {file_path}: {str(e)}")
+                success = False
+        
+        if success:
+            messagebox.showinfo("Success", "Selected files deleted successfully.")
+        duplicate_window.destroy()  # Close the sub-window
+
+# Function to open the sub-window for finding duplicates
+def rm_dupe():
+    duplicate_window = Toplevel(root)
+    duplicate_window.title("Duplicate Finder")
+    duplicate_window.configure(bg='#2c2f33')
+    
+    label = tk.Label(duplicate_window, text="Found duplicates. Select the files you want to delete:", 
+                     bg='#2c2f33', fg='#ffffff')
+    label.pack(pady=10)
+
+    result_listbox = Listbox(duplicate_window, height=15, width=100, selectmode=MULTIPLE, bg='#23272a', fg='#ffffff')
+    result_listbox.pack(pady=10)
+
+    delete_btn = tk.Button(duplicate_window, text="Delete Selected Files", 
+                           command=lambda: delete_selected_files(duplicate_window, result_listbox), 
+                           bg='#ff5555', fg='#ffffff', state='disabled')
+    delete_btn.pack(pady=10)
+
+    search_duplicates(duplicate_window, result_listbox, delete_btn)
 
 create_shortcut()
 
@@ -654,6 +755,8 @@ root.configure(bg="#2E2E2E")
 repair_file_system_button = tk.Button(root, text="Repair Filesystem", command=lambda: run_admin_command("echo J | chkdsk /f", "Successfully initiated chkdsk, your File System will be checked on the next startup."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_vs_button = tk.Button(root, text="Clean Virtual Storage", command=clean_vs, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+
+rm_dupe_button = tk.Button(root, text="Remove File Duplicates", command=rm_dupe, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 info_button = tk.Button(root, text="Info", command=show_info_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
