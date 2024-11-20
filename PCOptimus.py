@@ -97,7 +97,7 @@ def create_shortcut():
                                         f"The desktop shortcut '{shortcut_name}' already exists.")
         except Exception as e:
             messagebox.showerror("Error Creating Shortcut", f"Error creating the shortcut: {e}")
-			
+
 def clean_recycle_bin():
     try:
         if platform.system() == "Windows":
@@ -449,7 +449,7 @@ def advanced_debloat():
     
     if response:
         # Wenn der Benutzer auf Yes klickt
-        download_link = "https://cdn.discordapp.com/attachments/1276569836947902605/1276945729407025233/HBGs7VT.zip?ex=66cb5fe2&is=66ca0e62&hm=0ef399438ef74a887ccfadc6a9a1898f23c0d8969ec386ee7b889ab26e1afa89&"  # Discord-Link hier einfügen
+        download_link = "https://cdn.discordapp.com/attachments/1281297395375800372/1281297475143204894/nNIA5bj.zip?ex=66db34c3&is=66d9e343&hm=5217d65f24ead3ce5e095e7bab140807aebd4e8a9f60ff587bcf48141b1409d8&"  # Discord-Link hier einfügen
         download_and_extract_zip(download_link, os.getcwd())
     else:
         # Wenn der Benutzer auf No klickt, einfach das Popup schließen
