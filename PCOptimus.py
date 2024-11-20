@@ -408,59 +408,72 @@ def clear_frame():
     for widget in root.winfo_children():
         widget.pack_forget()
 
-# Funktion zum Herunterladen und Entpacken des .zip-Archivs
+# Function to download and extract the .zip archive
 def download_and_extract_zip(url, extract_to='.'):
-    # Erstellen des Zielpfads für den 'debloat'-Ordner
+    # Create the target path for the 'debloat' folder
     debloat_folder = os.path.join(extract_to, 'debloat')
     
-    # Überprüfen, ob der 'debloat'-Ordner existiert, und falls nicht, ihn erstellen
+    # Check if the 'debloat' folder exists, if not, create it
     if not os.path.exists(debloat_folder):
         os.makedirs(debloat_folder)
 
-    # Der Name der Datei, die heruntergeladen wird
+    # The name of the file being downloaded
     local_filename = os.path.join(debloat_folder, 'debloat.zip')
     
     try:
-        # Herunterladen der Datei
+        # Download the file
         with requests.get(url, stream=True) as r:
-            r.raise_for_status()
+            r.raise_for_status()  # Raise error if the download fails
             with open(local_filename, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=8192):
                     f.write(chunk)
         
-        # Entpacken der Datei in den 'debloat'-Ordner
+        # Unzip the file into the 'debloat' folder
         with zipfile.ZipFile(local_filename, 'r') as zip_ref:
             zip_ref.extractall(debloat_folder)
         
-        # Entfernen des .zip-Archivs nach dem Entpacken
+        # Remove the .zip archive after extraction
         os.remove(local_filename)
         
-        # Ausführen der Run.bat Datei im 'debloat'-Ordner
-        run_bat_path = os.path.join(debloat_folder, 'Run.bat')
-        subprocess.run(f'"{run_bat_path}"', shell=True)
+        # Path to the 'Start.bat' file in the 'Win11Debloat-master' subfolder
+        run_bat_path = os.path.join(debloat_folder, 'Win11Debloat-master', 'Run.bat')
         
-        messagebox.showinfo("Success", "The script has been downloaded and executed successfully!")
+        # Check if the .bat file exists
+        if not os.path.exists(run_bat_path):
+            raise FileNotFoundError(f"{run_bat_path} was not found.")
+
+        # Run the Start.bat file
+        result = subprocess.run(f'"{run_bat_path}"', shell=True, capture_output=True, text=True)
+
+        # Check if the script ran successfully
+        if result.returncode != 0:
+            raise RuntimeError(f"The script did not run successfully. Error: {result.stderr}")
+
+        # Show success message
+        messagebox.showinfo("Success", "The script was successfully downloaded and executed!")
+    
     except Exception as e:
+        # Show error message
         messagebox.showerror("Error", f"An error occurred: {e}")
 
-# Funktion, die ausgeführt wird, wenn der Button "Advanced Debloat" angeklickt wird
+# Function that is triggered when the "Advanced Debloat" button is clicked
 def advanced_debloat():
     response = messagebox.askyesno(
         "Advanced Debloat",
-        ("This will download a script powered by Raphire that provides advanced debloating functions for your PC, "
+        ("This will download a script by Raphire that provides advanced debloating functions for your PC, "
          "including the ability to disable Microsoft tracking. "
          "You can run the script later by going to the debloat folder and executing the Run.bat file, "
-         "which also allows you to undo any changes. However, please be careful and do not modify the code if you "
+         "which also allows you to undo any changes. Please be careful and do not modify the code if you "
          "are not familiar with it, as this could render the system unusable. I assume no liability. "
          "Do you want to download and run the script?")
     )
     
     if response:
-        # Wenn der Benutzer auf Yes klickt
-        download_link = "https://cdn.discordapp.com/attachments/1281297395375800372/1281297475143204894/nNIA5bj.zip?ex=66db34c3&is=66d9e343&hm=5217d65f24ead3ce5e095e7bab140807aebd4e8a9f60ff587bcf48141b1409d8&"  # Discord-Link hier einfügen
+        # If the user clicks Yes
+        download_link = "https://codeload.github.com/Raphire/Win11Debloat/zip/refs/heads/master"  # Download link
         download_and_extract_zip(download_link, os.getcwd())
     else:
-        # Wenn der Benutzer auf No klickt, einfach das Popup schließen
+        # If the user clicks No, simply close the popup
         pass
 		
 # Liste der Bloatware mit den entsprechenden Paketnamen und geschätztem Speicherplatzbedarf in MB
