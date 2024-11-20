@@ -2,7 +2,6 @@ import psutil
 import tkinter as tk
 from tkinter import messagebox, ttk
 from speedtest import Speedtest, ConfigRetrievalError
-from PIL import Image, ImageTk
 import tkinter.messagebox as messagebox
 import threading
 import platform
@@ -15,10 +14,20 @@ import re
 import chardet
 import tempfile
 import ctypes
+import sys
+import wmi
+import traceback
 
 # Get the directory of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
-
+	
+# Funktion, um zu überprüfen, ob Adminrechte vorhanden sind
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False	
+	
 def clean_recycle_bin():
     try:
         if platform.system() == "Windows":
@@ -52,44 +61,75 @@ def defragment():
     except Exception as e:
         log_error("Failed to defragment", e)
         messagebox.showerror("Error", "An error occurred while defragmenting the disk.")
-        
-def update_apps():
-    # Batch-Befehle
-    commands = [
-        "title Updater",
-        "color a",
-        "winget source reset --force",  # Quellen zurücksetzen
-        "winget source update",  # Quellen aktualisieren
-        "winget upgrade --all --include-unknown --accept-package-agreements --accept-source-agreements --force --uninstall-previous --disable-interactivity --wait",
-        "pause"
-    ]
-    
-    # Temporäre Batch-Datei erstellen
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".bat", mode='w', encoding='utf-8') as batch_file:
-        for command in commands:
-            batch_file.write(command + "\n")
-        batch_file_path = batch_file.name
 
-    # PowerShell-Skript, um die Batch-Datei mit Adminrechten auszuführen
-    powershell_script = f'''
-    $batch_file = "{batch_file_path}"
-    Start-Process -FilePath "cmd.exe" -ArgumentList "/c `" $batch_file `"" -Verb runAs
-    '''
-    
-    # Temporäre PowerShell-Datei erstellen
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".ps1", mode='w', encoding='utf-8') as ps_file:
-        ps_file.write(powershell_script)
-        ps_file_path = ps_file.name
+# Funktion, um den aktuellen Prozess als Administrator neu zu starten
+def elevate():
+    # Hole den Pfad zur aktuellen Python-Executable
+    script = os.path.abspath(sys.argv[0])
+    # Starte das Skript als Administrator neu
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, f'"{script}"', None, 1)
 
-    # PowerShell-Skript ausführen
-    subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_file_path], check=True)
+# Funktion, um einen Befehl als Administrator auszuführen und das Fenster zu verbergen
+def run_admin_command(command, success_message, show_window=False):
+    try:
+        if platform.system() == "Windows":
+            if is_admin():
+                # Befehl direkt ausführen, da der Benutzer Adminrechte hat
+                creationflags = subprocess.CREATE_NO_WINDOW if not show_window else 0
+                result = subprocess.run(command, shell=True, creationflags=creationflags)
+                if result.returncode == 0 or result.returncode == 3:  # Ignoriere exit code 3
+                    messagebox.showinfo("Success", success_message)
+                else:
+                    messagebox.showerror("Error", f"Command failed with return code {result.returncode}")
+            else:
+                # Skript als Administrator neu starten
+                messagebox.showinfo("Info", "This action requires administrator privileges. The program will restart with elevated rights.")
+                elevate()
+                root.quit()  # Altes Fenster schließen
+                os._exit(0)  # Sofort das alte Fenster beenden
+        else:
+            # Für andere Betriebssysteme: Befehl normal ausführen
+            result = subprocess.run(command, shell=True)
+            if result.returncode == 0 or result.returncode == 3:  # Ignoriere exit code 3
+                messagebox.showinfo("Success", success_message)
+            else:
+                messagebox.showerror("Error", f"Command failed with return code {result.returncode}")
+    except Exception as e:
+        # Fehlerprotokollierung und Anzeige
+        log_error(f"Error running admin command: {command}", e)
+        messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    # Temporäre Dateien löschen
-    os.remove(ps_file_path)
-    # Die Batch-Datei wird nicht sofort gelöscht, damit das Fenster offen bleibt
-    print(f"Die Batch-Datei befindet sich unter: {batch_file_path}")
-
-    
+# Funktion, um einen Befehl als Administrator mit sichtbarem CMD-Fenster auszuführen
+def run_window_admin_command(command, success_message):
+    try:
+        if platform.system() == "Windows":
+            if is_admin():
+                # Befehl in einem neuen CMD-Fenster ausführen
+                # Der Befehl 'start' wird verwendet, um ein neues CMD-Fenster zu öffnen
+                full_command = f'start cmd /k "{command}"'
+                result = subprocess.run(full_command, shell=True)
+                if result.returncode == 0 or result.returncode == 3:  # Ignoriere exit code 3
+                    messagebox.showinfo("Success", success_message)
+                else:
+                    messagebox.showerror("Error", f"Command failed with return code {result.returncode}")
+            else:
+                # Skript als Administrator neu starten
+                messagebox.showinfo("Info", "This action requires administrator privileges. The program will restart with elevated rights.")
+                elevate()
+                root.quit()  # Altes Fenster schließen
+                os._exit(0)  # Sofort das alte Fenster beenden
+        else:
+            # Für andere Betriebssysteme: Befehl normal ausführen
+            result = subprocess.run(command, shell=True)
+            if result.returncode == 0 or result.returncode == 3:  # Ignoriere exit code 3
+                messagebox.showinfo("Success", success_message)
+            else:
+                messagebox.showerror("Error", f"Command failed with return code {result.returncode}")
+    except Exception as e:
+        # Fehlerprotokollierung und Anzeige
+        log_error(f"Error running admin command: {command}", e)
+        messagebox.showerror("Error", f"An error occurred: {str(e)}")
+		
     # Function to check internet speed
 def get_internet_speed():
     try:
@@ -198,100 +238,6 @@ def run_command(command, success_message):
         log_error(f"Error running command: {command}", e)
         messagebox.showerror("Error", "An error occurred. Please check the log file for details.")
 
-def run_admin_command(command, success_message):
-    try:
-        if platform.system() == "Windows":
-            # Erstellen einer temporären Batch-Datei
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".bat") as temp_batch_file:
-                # Verbergen des CMD-Fensters
-                temp_batch_file.write(f'@echo off\n'.encode('utf-8'))
-                temp_batch_file.write(f'{command}\n'.encode('utf-8'))
-                temp_batch_file.write(f'del /f /q "{temp_batch_file.name}"\n'.encode('utf-8'))
-                
-            temp_batch_file_path = temp_batch_file.name
-
-            # Ausführen der Batch-Datei mit Administratorrechten
-            shell32 = ctypes.windll.shell32
-            shell32.ShellExecuteW(None, "runas", temp_batch_file_path, None, None, 0)
-            
-            # Erfolgsnachricht anzeigen
-            messagebox.showinfo("Success", success_message)
-        else:
-            run_command(command, success_message)
-    except Exception as e:
-        log_error(f"Error running admin command: {command}", e)
-        messagebox.showerror("Error", "An error occurred. Please check the log file for details.")
-
-def repair_file_system():
-    # Batch-Befehle
-    commands = [
-        "title Type J",
-        "chkdsk /f",
-    ]
-    
-    # Temporäre Batch-Datei erstellen
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".bat", mode='w', encoding='utf-8') as batch_file:
-        for command in commands:
-            batch_file.write(command + "\n")
-        batch_file_path = batch_file.name
-
-    # PowerShell-Skript, um die Batch-Datei mit Adminrechten auszuführen
-    powershell_script = f'''
-    $batch_file = "{batch_file_path}"
-    Start-Process -FilePath "cmd.exe" -ArgumentList "/c `" $batch_file `"" -Verb runAs
-    '''
-    
-    # Temporäre PowerShell-Datei erstellen
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".ps1", mode='w', encoding='utf-8') as ps_file:
-        ps_file.write(powershell_script)
-        ps_file_path = ps_file.name
-
-    # PowerShell-Skript ausführen
-    subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_file_path], check=True)
-
-    # Temporäre Dateien löschen
-    os.remove(ps_file_path)
-    # Die Batch-Datei wird nicht sofort gelöscht, damit das Fenster offen bleibt
-    print(f"Die Batch-Datei befindet sich unter: {batch_file_path}")
-        
-        
-def health_scan():
-    # Batch-Befehle
-    commands = [
-        "title Health Scan",
-        "msg * This Tool Scans for System Errors and fixxes them",
-        "clear",
-        "sfc /scannow",
-        "DISM /Online /Cleanup-Image /RestoreHealth",
-        "pause"
-    ]
-    
-    # Temporäre Batch-Datei erstellen
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".bat", mode='w', encoding='utf-8') as batch_file:
-        for command in commands:
-            batch_file.write(command + "\n")
-        batch_file_path = batch_file.name
-
-    # PowerShell-Skript, um die Batch-Datei mit Adminrechten auszuführen
-    powershell_script = f'''
-    $batch_file = "{batch_file_path}"
-    Start-Process -FilePath "cmd.exe" -ArgumentList "/c `" $batch_file `"" -Verb runAs
-    '''
-    
-    # Temporäre PowerShell-Datei erstellen
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".ps1", mode='w', encoding='utf-8') as ps_file:
-        ps_file.write(powershell_script)
-        ps_file_path = ps_file.name
-
-    # PowerShell-Skript ausführen
-    subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_file_path], check=True)
-
-    # Temporäre Dateien löschen
-    os.remove(ps_file_path)
-    # Die Batch-Datei wird nicht sofort gelöscht, damit das Fenster offen bleibt
-    print(f"Die Batch-Datei befindet sich unter: {batch_file_path}")
-
-
 def log_command(command, output):
     with open(os.path.join(script_dir, "log.txt"), "a") as f:
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -307,18 +253,40 @@ def log_error(message, error):
 def open_link(url):
     webbrowser.open_new(url)
 
+# Funktion zum Anzeigen der Hilfenachricht
 def show_help():
     help_text = (
-        "Health Scan: Scans for System Errors and fixxes them.\n"
-        "PC Info: Shows detailed information about the PC.\n"
+        "Info:\n"
+        "Info: Shows information about the PC.\n"
+        "Systeminfo: Displays basic system information.\n"
+        "Advanced Systeminfo: Retrieves advanced system information.\n"
+        "Resource Monitoring: Opens the Windows Resource Monitor.\n"
+        "Speedtest: Runs a speed test.\n"
+        "Connection: Shows network connection information.\n\n"
+
+        "Clean:\n"
         "Clean: Starts the Windows Disk Cleanup.\n"
         "WSReset: Resets the Microsoft Store and clears its cache.\n"
         "Disk Cleanup: Performs an advanced disk cleanup.\n"
         "Temp Cleanup: Deletes temporary files.\n"
+        "Clean Invis: Deletes invisible space-consuming files.\n"
+        "Clean Manager: Launches the Disk Cleanup Manager.\n"
+        "Empty Recycle Bin: Empties the Recycle Bin.\n"
+        "Defragment: Performs a disk defragmentation.\n"
+        "Clean Virtual Storage: Cleans virtual storage.\n\n"
+
+        "Update:\n"
         "Update All: Updates all installed applications.\n"
         "Windows Update: Checks for new Windows updates.\n"
         "Driver Update: Updates all drivers.\n"
-        "Clean Invis: Deletes invisible space-consuming files.\n"
+        "Update Apps: Updates all installed apps using Winget.\n\n"
+
+        "Repair:\n"
+        "Repair Filesystem: Initiates a check disk operation to repair filesystem errors.\n"
+        "Repair System Files: Scans and repairs system files using SFC and DISM.\n"
+        "Repair Connection: Repairs network connection issues.\n\n"
+
+        "Help: Shows this help message."
     )
     messagebox.showinfo("Help", help_text)
 
@@ -366,12 +334,10 @@ def show_main_menu():
     update_button.pack(pady=10)
     repair_button.pack(pady=10)
     help_button.pack(pady=10)
-    logo_frame.pack(side=tk.TOP, anchor=tk.NW)
 
 def clear_frame():
     for widget in root.winfo_children():
         widget.pack_forget()
-    logo_frame.pack_forget()
 
 def update_progress_window():
     def update_progress():
@@ -436,18 +402,7 @@ root.title("System Utility")
 root.geometry("400x600")
 root.configure(bg="#2E2E2E")
 
-def load_image(file, size):
-    image_path = os.path.join(script_dir, file)
-    image = Image.open(image_path).resize(size, Image.LANCZOS)
-    return ImageTk.PhotoImage(image)
-
-pc_info_button = tk.Button(root, text="PC Info", command=show_pc_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
-pc_info_button.pack(pady=10)
-
-pc_info_button.bind("<Enter>", lambda e: pc_info_button.config(relief="sunken"))
-pc_info_button.bind("<Leave>", lambda e: pc_info_button.config(relief="raised"))
-
-repair_file_system_button = tk.Button(root, text="Repair File System", command=repair_file_system, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+repair_file_system_button = tk.Button(root, text="Repair Filesystem", command=lambda: run_admin_command("echo J | chkdsk /f", "Successfully initiated chkdsk, your File System will be checked on the next startup."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_vs_button = tk.Button(root, text="Clean Virtual Storage", command=clean_vs, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -465,7 +420,7 @@ speedtest_button = tk.Button(root, text="Speedtest", command=show_speedtest_resu
 
 connection_button = tk.Button(root, text="Connection", command=show_connection_info, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-health_scan_button = tk.Button(root, text="Repair System Files", command=health_scan, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+health_scan_button = tk.Button(root, text="Repair System Files", command=lambda: run_window_admin_command("title Health Scan && cls && sfc /scannow && DISM /Online /Cleanup-Image /RestoreHealth && pause ", "Successfully startet Scanning for Erros in System and Image Files, please keep the New Terminal Window open to let the Process complete."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_button = tk.Button(root, text="Clean", command=show_clean_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -475,7 +430,7 @@ wsreset_button = tk.Button(root, text="WSReset", command=lambda: run_command("ws
 
 disk_cleanup_button = tk.Button(root, text="Disk Cleanup", command=lambda: run_command("cleanmgr /sagerun:1", "Advanced Disk Cleanup completed successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-temp_cleanup_button = tk.Button(root, text="Temp Cleanup", command=lambda: run_command("del /q/f/s %TEMP%\*", "Successfully deleted Temporary Files."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+temp_cleanup_button = tk.Button(root, text="Temp Cleanup", command=lambda: run_command(r"del /q/f/s %TEMP%\*", "Successfully deleted Temporary Files."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 clean_invis_button = tk.Button(root, text="Clean Invis", command=clean_invis_operation, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -488,11 +443,11 @@ storage_diagonistics_button = tk.Button(root, text="Storage Diagnostics", comman
 update_button = tk.Button(root, text="Update", command=show_update_menu, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 update_button.pack(pady=10)
 
-update_apps_button = tk.Button(root, text="Update Apps", command=update_apps, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+update_apps_button = tk.Button(root, text="Update Apps", command=lambda: run_window_admin_command("title Updater && color a && cls && winget source reset --force && winget source update && winget upgrade --all --include-unknown --accept-package-agreements --accept-source-agreements --force --uninstall-previous --disable-interactivity --wait ", "Winget initiated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 windows_update_button = tk.Button(root, text="Windows Update", command=lambda: run_command("wuauclt /detectnow /updatenow", "Windows update initiated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-repair_connection_button = tk.Button(root, text="Repair Connection", command=lambda: run_admin_command('ipconfig /flushdns && netsh winsock reset && netsh interface set interface name="*" admin=disable && netsh interface set interface name="*" admin=enable', "Successfully tried to Fixx Connection Errors, restart your System to complete the Process."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
+repair_connection_button = tk.Button(root, text="Repair Connection", command=lambda: run_admin_command("ipconfig /flushdns && netsh winsock reset && ipconfig /release && ipconfig /renew && netsh interface ip reset && netsh interface ipv4 reset && netsh interface ipv6 reset && route reset && netsh winsock reset catalog ", "Successfully ressettet Network and tried to fixx Connection Problems, restart your PC to complete the Process"), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
 driver_update_button = tk.Button(root, text="Driver Update", command=lambda: run_command("wuauclt /detectnow /updatenow", "Drivers updated successfully."), bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
@@ -500,11 +455,6 @@ back_button = tk.Button(root, text="Back", command=show_main_menu, bg="#444", fg
 
 help_button = tk.Button(root, text="Help", command=show_help, bg="#444", fg="white", activebackground="#555", activeforeground="white", borderwidth=1, relief="raised")
 
-logo_image = load_image("logo.png", (150, 50))
-logo_label = tk.Label(root, image=logo_image, bg="#2E2E2E")
-logo_frame = tk.Frame(root, bg="#2E2E2E")
-logo_label.pack()
-logo_frame.pack(side=tk.TOP, anchor=tk.NW)
 
 show_main_menu()
 
