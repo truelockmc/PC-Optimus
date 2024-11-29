@@ -10,17 +10,15 @@ If you need help or encounter errors, please join our [Discord server](https://d
 
 ### Using the `.py` File
 
-1. Download the following files from the [latest release](https://github.com/truelockmc/PC-Optimus/releases):
-   - `setup.bat`
-   - `install_python.ps1`
-   - `PC-Optimus.py`
-   - `requirements.txt`
-     
-2. Run `setup.bat`. This script will automatically install Python (if not already installed) and the necessary modules.
+1. Download `PCOptimus(unzip_me).zip` from the [latest release](https://github.com/truelockmc/PC-Optimus/releases)
 
-3. If you prefer not to use `setup.bat`, manually install Python and run `pip3 install -r requirements.txt` in the Direcory you downloaded the Files.
+2. Unzip/unpack `PCOptimus(unzip_me).zip`
 
-4. Run `PC-Optimus.py`.
+3. Run `setup.bat`. This script will automatically install Python (if not already installed) and the necessary modules.
+
+4. If you prefer not to use `setup.bat`, manually install Python and run `pip3 install -r requirements.txt` in the Direcory you downloaded the Files.
+
+5. Run `PC-Optimus.py`.
 
 5. If you ran it once, you can also access it from the Start Menu by searching PCOptimus
 
