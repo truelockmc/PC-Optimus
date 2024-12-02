@@ -10,7 +10,7 @@ def is_admin():
         return False	
 
 # Funktion, um den aktuellen Prozess als Administrator neu zu starten
-def elevate(root=None):
+def elevate(root):
     # Hole den Pfad zur aktuellen Python-Executable
     script = os.path.abspath(sys.argv[0])
     root.destroy()

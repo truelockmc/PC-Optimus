@@ -1,6 +1,8 @@
 import subprocess
+import platform
 from Features.logging_func import log_command, log_error
 import chardet
+import platform
 import tkinter as tk
 from tkinter import messagebox  
 from Features.admin_elevate import is_admin, elevate
@@ -40,7 +42,7 @@ def run_admin_command(command, success_message, show_window=False):
             else:
                 # Skript als Administrator neu starten
                 messagebox.showinfo("Info", "This action requires administrator privileges. The program will restart with elevated rights.")
-                elevate()
+                elevate(root)
                 root.quit()  # Altes Fenster schließen
                 os._exit(0)  # Sofort das alte Fenster beenden
         else:
@@ -55,13 +57,12 @@ def run_admin_command(command, success_message, show_window=False):
         log_error(f"Error running admin command: {command}", e)
         messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-# Funktion, um einen Befehl als Administrator mit sichtbarem CMD-Fenster auszuführen
 def run_window_admin_command(command, success_message):
+    global root  # Zugriff auf die globale Variable root
     try:
         if platform.system() == "Windows":
             if is_admin():
                 # Befehl in einem neuen CMD-Fenster ausführen
-                # Der Befehl 'start' wird verwendet, um ein neues CMD-Fenster zu öffnen
                 full_command = f'start cmd /k "{command}"'
                 result = subprocess.run(full_command, shell=True)
                 if result.returncode == 0 or result.returncode == 3:  # Ignoriere exit code 3
@@ -71,9 +72,10 @@ def run_window_admin_command(command, success_message):
             else:
                 # Skript als Administrator neu starten
                 messagebox.showinfo("Info", "This action requires administrator privileges. The program will restart with elevated rights.")
-                elevate()
-                root.quit()  # Altes Fenster schließen
-                os._exit(0)  # Sofort das alte Fenster beenden
+                elevate(root)
+                if root is not None:
+                    root.quit()
+                os._exit(0)  # Beendet den Prozess
         else:
             # Für andere Betriebssysteme: Befehl normal ausführen
             result = subprocess.run(command, shell=True)

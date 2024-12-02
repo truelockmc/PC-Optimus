@@ -4,7 +4,7 @@ $url = "https://www.python.org/ftp/python/$version/python-$version-amd64.exe"
 $logFile = "$env:TEMP\python_install_log.txt"
 
 # Define a function to log messages to the log file and display to the user
-function Log-Message {
+function Log_Message {
     param (
         [string]$message
     )
@@ -18,7 +18,6 @@ Invoke-WebRequest $url -OutFile python-$version.exe
 Log-Message "Download completed."
 
 # Notify user and install Python
-$installPath = "$($env:ProgramFiles)\Python$version"
 Log-Message "Installing Python $version..."
 Start-Process python-$version.exe -ArgumentList "/quiet", "InstallAllUsers=1", "PrependPath=1" -Wait
 Log-Message "Python installation completed."

@@ -10,9 +10,9 @@ If you need help or encounter errors, please join our [Discord server](https://d
 
 ### Using the `.py` File
 
-1. Download `PCOptimus(unzip_me).zip` from the [latest release](https://github.com/truelockmc/PC-Optimus/releases)
+1. Download `PCOptimus.unzip_me.zip` from the [latest release](https://github.com/truelockmc/PC-Optimus/releases)
 
-2. Unzip/unpack `PCOptimus(unzip_me).zip`
+2. Unzip/unpack `PCOptimus.unzip_me.zip`
 
 3. Run `setup.bat`. This script will automatically install Python (if not already installed) and the necessary modules.
 
