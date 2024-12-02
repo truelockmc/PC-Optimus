@@ -1,6 +1,7 @@
 import subprocess
 from Features.logging_func import log_command, log_error
 import chardet
+import platform
 import tkinter as tk
 from tkinter import messagebox  
 from Features.admin_elevate import is_admin, elevate
