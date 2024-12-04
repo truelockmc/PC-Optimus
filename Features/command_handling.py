@@ -2,10 +2,10 @@ import subprocess
 import platform
 from Features.logging_func import log_command, log_error
 import chardet
-import platform
 import tkinter as tk
 from tkinter import messagebox  
 from Features.admin_elevate import is_admin, elevate
+import os
 
 def run_command(command, success_message):
     try:
@@ -28,12 +28,12 @@ def run_command(command, success_message):
         messagebox.showerror("Error", "An error occurred. Please check the log file for details.")
      
 # Funktion, um einen Befehl als Administrator auszuführen und das Fenster zu verbergen
-def run_admin_command(command, success_message, show_window=False):
+def run_admin_command(command, success_message, root):
     try:
         if platform.system() == "Windows":
             if is_admin():
                 # Befehl direkt ausführen, da der Benutzer Adminrechte hat
-                creationflags = subprocess.CREATE_NO_WINDOW if not show_window else 0
+                creationflags = subprocess.CREATE_NO_WINDOW
                 result = subprocess.run(command, shell=True, creationflags=creationflags)
                 if result.returncode == 0 or result.returncode == 3:  # Ignoriere exit code 3
                     messagebox.showinfo("Success", success_message)
@@ -57,8 +57,7 @@ def run_admin_command(command, success_message, show_window=False):
         log_error(f"Error running admin command: {command}", e)
         messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-def run_window_admin_command(command, success_message):
-    global root  # Zugriff auf die globale Variable root
+def run_window_admin_command(command, success_message, root):
     try:
         if platform.system() == "Windows":
             if is_admin():
@@ -85,5 +84,5 @@ def run_window_admin_command(command, success_message):
                 messagebox.showerror("Error", f"Command failed with return code {result.returncode}")
     except Exception as e:
         # Fehlerprotokollierung und Anzeige
-        log_error(f"Error running admin command: {command}", e)
+        log_error(f"Error running admin command in window mode: {command}", e)
         messagebox.showerror("Error", f"An error occurred: {str(e)}")
