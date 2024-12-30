@@ -6,6 +6,8 @@ If you need help or encounter errors, please join our [Discord server](https://d
 
 [![Stargazers repo roster for @truelockmc/PC-Optimus](https://reporoster.com/stars/dark/truelockmc/PC-Optimus)](https://github.com/truelockmc/PC-Optimus/stargazers)
 
+[Documentation](https://github.com/truelockmc/PC-Optimus/tree/main/Documentation)
+
 ## Setup
 
 ### Using the `.py` File
