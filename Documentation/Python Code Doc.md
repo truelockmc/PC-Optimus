@@ -7,23 +7,23 @@ Here you will find an Explaination to every Part of the Code that is Python.
 [PCOptimus.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#pcoptimuspy---main-file)  
 ├── UI
 │   ├── [Buttons.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#uibuttonspy)  
-│   └── [__init__.py](./UI/__init__.py)  
+│   └── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
 ├── Features  
 │   ├── [command_handling.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescommand_handlingpy)  
 │   ├── [help.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featureshelppy)  
 │   ├── [logging_func.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featureslogging_funcpy)  
 │   ├── [shortcut.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresshortcutpy)  
-│   ├── [__init__.py](./Features/__init__.py)  
+│   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
 │   ├── [admin_elevate.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresadmin_elevatepy)  
 │   ├── clean  
-│   │   ├── [__init__.py](./Features/clean/__init__.py)  
+│   │   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
 │   │   ├── [adv_bloat.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleanadv_bloatpy)  
 │   │   ├── [clean_startup.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleanclean_startuppy)  
 │   │   ├── [rm_bloat.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleanrm_bloatpy)  
 │   │   ├── [rm_dupe.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleanrm_dupepy)  
 │   │   └── [tiny_clean_features.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleantiny_clean_featurespy)  
 │   ├── info  
-│   │   ├── [__init__.py](./Features/info/__init__.py)  
+│   │   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
 │   │   ├── [connection.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfoconnectionpy)  
 │   │   ├── [internet_speedtest.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfointernet_speedtestpy)  
 │   │   └── [pc_info.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfopc_infopy)  
