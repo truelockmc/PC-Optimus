@@ -6,14 +6,14 @@ Here you will find an Explaination to every Part of the Code that is Python.
 
 [PCOptimus.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#pcoptimuspy---main-file)  
 ├── UI
-│   ├── [Buttons.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#uibuttonspy)  
-│   └── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
+│   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)   
+│   └── [Buttons.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#uibuttonspy)
 ├── Features  
+│   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
 │   ├── [command_handling.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescommand_handlingpy)  
 │   ├── [help.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featureshelppy)  
 │   ├── [logging_func.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featureslogging_funcpy)  
 │   ├── [shortcut.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresshortcutpy)  
-│   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
 │   ├── [admin_elevate.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresadmin_elevatepy)  
 │   ├── clean  
 │   │   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
