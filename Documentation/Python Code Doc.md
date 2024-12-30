@@ -5,9 +5,9 @@ Here you will find an Explaination to every Part of the Code that is Python.
 # Tree:
 
 [PCOptimus.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#pcoptimuspy---main-file)  
-├── UI
+├── UI  
 │   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)   
-│   └── [Buttons.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#uibuttonspy)
+│   └── [Buttons.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#uibuttonspy)  
 ├── Features  
 │   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
 │   ├── [command_handling.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescommand_handlingpy)  
@@ -26,8 +26,7 @@ Here you will find an Explaination to every Part of the Code that is Python.
 │   │   ├── [__init__.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#__init__py-files)  
 │   │   ├── [connection.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfoconnectionpy)  
 │   │   ├── [internet_speedtest.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfointernet_speedtestpy)  
-│   │   └── [pc_info.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfopc_infopy)  
-
+│   │   └── [pc_info.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfopc_infopy)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
