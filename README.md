@@ -2,11 +2,11 @@
 
 PC-Optimus is a lightweight, open-source Python tool for Windows that offers various Features to clean up, debloat, update, repair, and gather information about your PC, everything without requiring code knowledge. 
 
-If you need help or encounter errors, please join our [Discord server](https://discord.gg/36bPs8cQ5B), ask for assistance, and send your log files or error codes if available.
+If you need help or encounter errors, please join my [Discord server](https://discord.gg/36bPs8cQ5B), ask for assistance, and send your log files or error codes if available.
 
 [![Stargazers repo roster for @truelockmc/PC-Optimus](https://reporoster.com/stars/dark/truelockmc/PC-Optimus)](https://github.com/truelockmc/PC-Optimus/stargazers)
 
-[Documentation](https://github.com/truelockmc/PC-Optimus/tree/main/Documentation)
+# [Documentation](https://github.com/truelockmc/PC-Optimus/tree/main/Documentation)
 
 ## Setup
 
