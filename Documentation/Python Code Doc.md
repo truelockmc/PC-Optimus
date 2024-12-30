@@ -2,6 +2,46 @@
 
 Here you will find an Explaination to every Part of the Code that is Python.
 
+# Tree:
+
+[PCOptimus.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#pcoptimuspy---main-file)  
+├── UI
+│   ├── [Buttons.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#uibuttonspy)  
+│   └── [__init__.py](./UI/__init__.py)  
+├── Features  
+│   ├── [command_handling.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescommand_handlingpy)  
+│   ├── [help.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featureshelppy)  
+│   ├── [logging_func.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featureslogging_funcpy)  
+│   ├── [shortcut.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresshortcutpy)  
+│   ├── [__init__.py](./Features/__init__.py)  
+│   ├── [admin_elevate.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresadmin_elevatepy)  
+│   ├── clean  
+│   │   ├── [__init__.py](./Features/clean/__init__.py)  
+│   │   ├── [adv_bloat.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleanadv_bloatpy)  
+│   │   ├── [clean_startup.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleanclean_startuppy)  
+│   │   ├── [rm_bloat.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleanrm_bloatpy)  
+│   │   ├── [rm_dupe.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleanrm_dupepy)  
+│   │   └── [tiny_clean_features.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featurescleantiny_clean_featurespy)  
+│   ├── info  
+│   │   ├── [__init__.py](./Features/info/__init__.py)  
+│   │   ├── [connection.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfoconnectionpy)  
+│   │   ├── [internet_speedtest.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfointernet_speedtestpy)  
+│   │   └── [pc_info.py](https://github.com/truelockmc/PC-Optimus/blob/main/Documentation/Python%20Code%20Doc.md#featuresinfopc_infopy)  
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# __init__.py Files
+
+Thise Files dont contain any Code, but the Program needs them to run, because of the following Points:
+
+- **Package Initialization**: The `__init__.py` file is executed when a package or module is imported. It can contain package-level variables, functions, or initialization code.
+  
+- **Marking a Directory as a Package**: The presence of `__init__.py` turns a directory into a Python package. Without it, Python treats the directory as a regular folder, not a package.
+
+- **Optional in Modern Python**: In Python 3.3 and above, `__init__.py` is not strictly required, but it is still commonly used for backward compatibility and for structuring packages.
+
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # PCOptimus.py - Main File
