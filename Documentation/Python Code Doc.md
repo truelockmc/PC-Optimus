@@ -4,7 +4,7 @@ Here you will find an Explaination to every Part of the Code that is Python.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## PCOptimus.py - Main File
+# PCOptimus.py - Main File
 
 This Python file is the core of the Application
 
@@ -147,7 +147,7 @@ root.mainloop()
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## UI/Buttons.py
+# UI/Buttons.py
 
 This file defines the creation and configuration of various buttons for the PC Optimus application's graphical user interface (GUI) using Tkinter. Each button is linked to a specific action or function.
 
@@ -244,7 +244,7 @@ The `create_buttons` function is central to creating the interactive elements of
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Features/admin_elevate.py
+# Features/admin_elevate.py
 
 This file contains functions that handle administrative privileges for running the PC Optimus application on Windows. It checks if the current user has administrator rights and provides a way to elevate the current process to administrator privileges if necessary.
 
@@ -301,7 +301,7 @@ These functions are crucial for operations that require administrative rights, s
 
 
 
-## Features/command_handling.py
+# Features/command_handling.py
 
 This file contains functions that handle the execution of system commands, particularly focusing on running them with administrative privileges. It also includes error handling and logging for successful or failed command executions.
 
@@ -439,7 +439,7 @@ The `command_handling.py` file provides essential functionality for running syst
 
 
 
-### Features/help.py
+# Features/help.py
 
 The `help.py` file provides a function to display a help message that outlines the available features and their descriptions. This is typically shown to the user when they need information on how to use the program's various tools and options.
 
@@ -551,7 +551,7 @@ The `show_help` function provides users with an overview of all the tools and op
 
 
 
-### Features/logging_func.py
+# Features/logging_func.py
 
 The `logging_func.py` file contains functions that help log various types of information, such as commands executed and errors encountered, to a log file. This is important for debugging and tracking the program's actions over time. The log entries are timestamped, which provides insight into when specific actions occurred.
 
@@ -637,7 +637,7 @@ The `logging_func.py` file ensures that all important actions (commands and erro
 
 
 
-### Features/shortcut.py
+# Features/shortcut.py
 
 The `shortcut.py` file contains functionality for creating shortcuts to a script in both the Windows Start Menu and the Desktop. This feature allows users to easily access the program through shortcuts, improving usability.
 
