@@ -78,7 +78,7 @@ If you need help or encounter errors, please join my [Discord server](https://di
 
 ## Forking Policy
 
-1. You may only create a fork or republish the code if:
+1. You may only create a public fork or republish the code if:
     - You have made meaningful changes to the code (e.g., adding new features or fixing bugs).
     - You have first submitted a pull request with your changes, and it was rejected by the repository maintainers.
 2. If this repository has not been updated for two or more years, you may fork and modify the code freely without needing approval.
