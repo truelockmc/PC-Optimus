@@ -1,4 +1,8 @@
 # PC-Optimus
+[![Downloads@latest](https://img.shields.io/github/downloads/truelockmc/PC-Optimus/latest/total?style=for-the-badge)](https://github.com/truelockmc/PC-Optimus/releases/download/latest/PCOptimus.unzip_me.zip)
+[![Release Version Badge](https://img.shields.io/github/v/release/truelockmc/PC-Optimus?style=for-the-badge)](https://github.com/truelockmc/PC-Optimus/releases)
+[![Issues Badge](https://img.shields.io/github/issues/truelockmc/PC-Optimus?style=for-the-badge)](https://github.com/truelockmc/PC-Optimus/issues)
+[![Closed Issues Badge](https://img.shields.io/github/issues-closed/truelockmc/PC-Optimus?color=%238256d0&style=for-the-badge)](https://github.com/truelockmc/PC-Optimus/issues?q=is%3Aissue+is%3Aclosed)<br>
 
 PC-Optimus is a lightweight, open-source Python tool for Windows that offers various Features to clean up, debloat, update, repair, and gather information about your PC, everything without requiring code knowledge. 
 
