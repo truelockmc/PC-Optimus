@@ -76,6 +76,12 @@ If you need help or encounter errors, please join my [Discord server](https://di
 ### Help Button
 - Explains the function of each button.
 
+## Forking Policy
+
+1. You may only create a fork or republish the code if:
+    - You have made meaningful changes to the code (e.g., adding new features or fixing bugs).
+    - You have first submitted a pull request with your changes, and it was rejected by the repository maintainers.
+2. If this repository has not been updated for two or more years, you may fork and modify the code freely without needing approval.
 
 ## Contributing
 
@@ -83,7 +89,7 @@ Feel free to contribute to the project by submitting issues or pull requests. Fo
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/truelockmc/PC-Optimus/blob/main/LICENSE.txt) file for details.
+This project is licensed under an extended MIT License. See the [LICENSE](https://github.com/truelockmc/PC-Optimus/blob/main/LICENSE.txt) file for details.
 
 ## Contact
 
