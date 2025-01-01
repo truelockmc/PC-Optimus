@@ -20,7 +20,7 @@ If you need help or encounter errors, please join my [Discord server](https://di
 
 ### Using the `.py` File
 
-1. Download `PCOptimus.unzip_me.zip` from the [latest release](https://github.com/truelockmc/PC-Optimus/releases)
+1. Download `PCOptimus.unzip_me.zip` from the [latest release](https://github.com/truelockmc/PC-Optimus/releases/latest)
 
 2. Unzip/unpack `PCOptimus.unzip_me.zip`
 
