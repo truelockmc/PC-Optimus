@@ -1,7 +1,7 @@
 @echo off
 echo ================================================================================
 echo Welcome to PC Optimus, the ultimate open-source multitool for Windows.
-echo This script will help you install Python if it is not already installed.
+echo This script will help you install the Requirements if not already installed.
 echo ================================================================================
 echo.
 pause
@@ -26,12 +26,12 @@ pause
 exit /b
 
 :install_python
-echo Python is not installed. Starting PowerShell script to install Python...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0install_python.ps1"
-if %errorlevel% neq 0 (
-    echo Failed to execute the PowerShell script to install Python.
-    exit /b %errorlevel%
-)
-echo Python installation script executed successfully.
+@echo off
+
+:install_python
+echo Python is not installed!
+echo Please download the latest version here: https://www.python.org/downloads/ and close this window.
+echo Press enter to open the official Downloadsite
 pause
+start https://www.python.org/downloads/
 exit /b
