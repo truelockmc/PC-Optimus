@@ -24,7 +24,7 @@ If you need help or encounter errors, please join my [Discord server](https://di
 
 2. Unzip/unpack `PCOptimus.unzip_me.zip`
 
-3. Run `setup.bat`. This script will automatically install Python (if not already installed) and the necessary modules.
+3. Run `setup.bat`. This script will automatically promt you to install Python (if not already installed) and will install the necessary modules.
 
 4. If you prefer not to use `setup.bat`, manually install Python and run `pip3 install -r requirements.txt` in the Direcory you downloaded the Files.
 
