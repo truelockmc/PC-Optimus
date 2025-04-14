@@ -51,6 +51,7 @@ If you need help or encounter errors, please join my [Discord server](https://di
 - Resolve storage, virtual storage, and RAM errors.
 - Fix file system errors.
 - Repair network connection errors by cleaning up, resetting, and restarting network settings and adapters.
+- Check for Hardware Problems.
 
 ### Updating
 - Update all installed apps.
