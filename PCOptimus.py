@@ -49,6 +49,7 @@ def show_repair_menu():
     buttons['storage_diagonistics_button'].pack(pady=10)
     buttons['repair_file_system_button'].pack(pady=10)
     buttons['repair_connection_button'].pack(pady=10)
+    buttons['check_hardware_button'].pack(pady=10)
     buttons['back_button'].pack(pady=10)
 
 def show_main_menu():
