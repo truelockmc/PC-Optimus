@@ -54,6 +54,7 @@ def create_buttons(root, show_main_menu, show_info_menu, show_clean_menu, show_u
         "update_apps_button": tk.Button(root, text="Update Apps", command=lambda: run_window_admin_command("title Updater && winget source update && cls && winget upgrade --all --include-unknown --accept-package-agreements --accept-source-agreements --force --disable-interactivity --wait", "Winget initiated successfully.", root), **button_style),
         "windows_update_button": tk.Button(root, text="Windows Update", command=lambda: run_command("wuauclt /detectnow /updatenow", "Windows update initiated successfully."), **button_style),
         "repair_connection_button": tk.Button(root, text="Repair Connection", command=lambda: run_admin_command("ipconfig /flushdns && netsh winsock reset && ipconfig /release && ipconfig /renew", "Successfully reset Network and tried to fix Connection Problems.", root), **button_style),
+        "check_hardware_button": tk.Button(root, text="Check for Hardware Problems", command=lambda: run_admin_command("msdt.exe -id DeviceDiagnostic", "Successfully executed Windows Hardware check.", root), **button_style),
         "driver_update_button": tk.Button(root, text="Driver Update", command=lambda: run_command("wuauclt /detectnow /updatenow", "Drivers updated successfully."), **button_style),
         "back_button": tk.Button(root, text="Back", command=show_main_menu, **button_style),
         "help_button": tk.Button(root, text="Help", command=lambda: print("Show Help (Placeholder)"), **button_style),
