@@ -1,3 +1,13 @@
+# This Project will be discontinued!
+This was my first big Project and i was very proud of it, but i have decided to dicontinue it:
+- The Project was an interesting approach, utilizing windows own hidden tools, but its not made that well.
+- It wasn't really a tool for the masses, more like something someone who knew how the Code worked could use personally.
+- Also i have kind of given up on trying to fix a broken system and switched to Linux a while ago.
+
+- This Project will no longer be updated.
+### - It is still going to work probably, but i do not really recommend using either Windows or this Tool
+
+
 # PC-Optimus
 [![Downloads@latest](https://img.shields.io/github/downloads/truelockmc/PC-Optimus/latest/total?style=for-the-badge)](https://github.com/truelockmc/PC-Optimus/releases/download/latest/PCOptimus.unzip_me.zip)
 [![Release Version Badge](https://img.shields.io/github/v/release/truelockmc/PC-Optimus?style=for-the-badge)](https://github.com/truelockmc/PC-Optimus/releases)
